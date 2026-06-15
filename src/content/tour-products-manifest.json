@@ -1,0 +1,44 @@
+{
+  "products": [
+    {
+      "slug": "bob-marley-nine-mile-experience",
+      "title": "Bob Marley Nine Mile Experience",
+      "bodyClass": "wp-singular product-template-default single single-product postid-1337 wp-embed-responsive wp-theme-hello-elementor theme-hello-elementor woocommerce woocommerce-page woocommerce-no-js qodef-qi--no-touch qi-addons-for-elementor-1.10 jkit-color-scheme hello-elementor-default elementor-default elementor-template-full-width elementor-kit-102 elementor-page-1326"
+    },
+    {
+      "slug": "local-shopping-souvenirs-experience",
+      "title": "Local Shopping &#038; Souvenirs Experience",
+      "bodyClass": "wp-singular product-template-default single single-product postid-1336 wp-embed-responsive wp-theme-hello-elementor theme-hello-elementor woocommerce woocommerce-page woocommerce-no-js qodef-qi--no-touch qi-addons-for-elementor-1.10 jkit-color-scheme hello-elementor-default elementor-default elementor-template-full-width elementor-kit-102 elementor-page-1326"
+    },
+    {
+      "slug": "montego-bay-city-private-tour-2",
+      "title": "Montego Bay City Private Tour",
+      "bodyClass": "wp-singular product-template-default single single-product postid-1335 wp-embed-responsive wp-theme-hello-elementor theme-hello-elementor woocommerce woocommerce-page woocommerce-no-js qodef-qi--no-touch qi-addons-for-elementor-1.10 jkit-color-scheme hello-elementor-default elementor-default elementor-template-full-width elementor-kit-102 elementor-page-1326"
+    },
+    {
+      "slug": "bamboo-river-rafting-at-lethe-estate",
+      "title": "Bamboo River Rafting at Lethe Estate",
+      "bodyClass": "wp-singular product-template-default single single-product postid-1334 wp-embed-responsive wp-theme-hello-elementor theme-hello-elementor woocommerce woocommerce-page woocommerce-no-js qodef-qi--no-touch qi-addons-for-elementor-1.10 jkit-color-scheme hello-elementor-default elementor-default elementor-template-full-width elementor-kit-102 elementor-page-1326"
+    },
+    {
+      "slug": "ricks-cafe-seven-mile-beach-experience",
+      "title": "Rick&#8217;s Cafe &#038; Seven Mile Beach Experience",
+      "bodyClass": "wp-singular product-template-default single single-product postid-1333 wp-embed-responsive wp-theme-hello-elementor theme-hello-elementor woocommerce woocommerce-page woocommerce-no-js qodef-qi--no-touch qi-addons-for-elementor-1.10 jkit-color-scheme hello-elementor-default elementor-default elementor-template-full-width elementor-kit-102 elementor-page-1326"
+    },
+    {
+      "slug": "ys-falls-adventure",
+      "title": "YS Falls Adventure",
+      "bodyClass": "wp-singular product-template-default single single-product postid-1332 wp-embed-responsive wp-theme-hello-elementor theme-hello-elementor woocommerce woocommerce-page woocommerce-no-js qodef-qi--no-touch qi-addons-for-elementor-1.10 jkit-color-scheme hello-elementor-default elementor-default elementor-template-full-width elementor-kit-102 elementor-page-1326"
+    },
+    {
+      "slug": "dunns-river-falls-adventure-2",
+      "title": "Dunn&#8217;s River Falls Adventure",
+      "bodyClass": "wp-singular product-template-default single single-product postid-1328 wp-embed-responsive wp-theme-hello-elementor theme-hello-elementor woocommerce woocommerce-page woocommerce-no-js qodef-qi--no-touch qi-addons-for-elementor-1.10 jkit-color-scheme hello-elementor-default elementor-default elementor-template-full-width elementor-kit-102 elementor-page-1326"
+    },
+    {
+      "slug": "blue-hole-secret-escape-2",
+      "title": "Blue Hole Secret Escape",
+      "bodyClass": "wp-singular product-template-default single single-product postid-1324 wp-embed-responsive wp-theme-hello-elementor theme-hello-elementor woocommerce woocommerce-page woocommerce-no-js qodef-qi--no-touch qi-addons-for-elementor-1.10 jkit-color-scheme hello-elementor-default elementor-default elementor-template-full-width elementor-kit-102 elementor-page-1326"
+    }
+  ]
+}

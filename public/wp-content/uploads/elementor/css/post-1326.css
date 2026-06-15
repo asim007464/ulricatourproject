@@ -1,0 +1,248 @@
+.elementor-1326 .elementor-element.elementor-element-90dc87b {
+    --display: flex;
+    --min-height: 400px;
+    --flex-direction: column;
+    --container-widget-width: 100%;
+    --container-widget-height: initial;
+    --container-widget-flex-grow: 0;
+    --container-widget-align-self: initial;
+    --flex-wrap-mobile: wrap;
+    --justify-content: center;
+    --overlay-opacity: 0;
+    --padding-top: 0px;
+    --padding-bottom: 0px;
+    --padding-left: 0px;
+    --padding-right: 0px;
+}
+
+.elementor-1326 .elementor-element.elementor-element-90dc87b::before,
+.elementor-1326 .elementor-element.elementor-element-90dc87b>.elementor-background-video-container::before,
+.elementor-1326 .elementor-element.elementor-element-90dc87b>.e-con-inner>.elementor-background-video-container::before,
+.elementor-1326 .elementor-element.elementor-element-90dc87b>.elementor-background-slideshow::before,
+.elementor-1326 .elementor-element.elementor-element-90dc87b>.e-con-inner>.elementor-background-slideshow::before,
+.elementor-1326 .elementor-element.elementor-element-90dc87b>.elementor-motion-effects-container>.elementor-motion-effects-layer::before {
+    background-color: var( --e-global-color-primary);
+    --background-overlay: '';
+}
+
+.elementor-1326 .elementor-element.elementor-element-90dc87b:not(.elementor-motion-effects-element-type-background),
+.elementor-1326 .elementor-element.elementor-element-90dc87b>.elementor-motion-effects-container>.elementor-motion-effects-layer {
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.elementor-1326 .elementor-element.elementor-element-0f7ecd4 {
+    --display: flex;
+    --flex-direction: row;
+    --container-widget-width: initial;
+    --container-widget-height: 100%;
+    --container-widget-flex-grow: 1;
+    --container-widget-align-self: stretch;
+    --flex-wrap-mobile: wrap;
+    --gap: 20px 20px;
+    --row-gap: 20px;
+    --column-gap: 20px;
+    --padding-top: 60px;
+    --padding-bottom: 100px;
+    --padding-left: 20px;
+    --padding-right: 20px;
+}
+
+.elementor-1326 .elementor-element.elementor-element-34c3ae4 {
+    --display: flex;
+    --flex-direction: column;
+    --container-widget-width: 100%;
+    --container-widget-height: initial;
+    --container-widget-flex-grow: 0;
+    --container-widget-align-self: initial;
+    --flex-wrap-mobile: wrap;
+    --padding-top: 0px;
+    --padding-bottom: 0px;
+    --padding-left: 0px;
+    --padding-right: 0px;
+}
+
+.elementor-1326 .elementor-element.elementor-element-d9b47c6 {
+    width: 100%;
+    max-width: 100%;
+}
+
+.elementor-1326 .elementor-element.elementor-element-d9b47c6 .elementor-heading-title {
+    font-size: 40px;
+    color: var( --e-global-color-primary);
+}
+
+.elementor-1326 .elementor-element.elementor-element-11e8a25 {
+    margin: -15px 0px calc(var(--kit-widget-spacing, 0px) + 0px) 0px;
+}
+
+.elementor-1326 .elementor-element.elementor-element-11e8a25 .elementor-heading-title {
+    font-size: 18px;
+    color: var( --e-global-color-primary);
+}
+
+.elementor-1326 .elementor-element.elementor-element-a1782f3 {
+    margin: 0px 0px calc(var(--kit-widget-spacing, 0px) + 20px) 0px;
+}
+
+.elementor-1326 .elementor-element.elementor-element-04bcae9 {
+    --display: flex;
+    --flex-direction: column;
+    --container-widget-width: 100%;
+    --container-widget-height: initial;
+    --container-widget-flex-grow: 0;
+    --container-widget-align-self: initial;
+    --flex-wrap-mobile: wrap;
+    --padding-top: 0px;
+    --padding-bottom: 0px;
+    --padding-left: 30px;
+    --padding-right: 0px;
+}
+
+.elementor-1326 .elementor-element.elementor-element-0b95734 {
+    --display: flex;
+    --overflow: hidden;
+    border-style: solid;
+    --border-style: solid;
+    border-width: 1px 1px 1px 1px;
+    --border-top-width: 1px;
+    --border-right-width: 1px;
+    --border-bottom-width: 1px;
+    --border-left-width: 1px;
+    border-color: #148F9F38;
+    --border-color: #148F9F38;
+    --border-radius: 20px 20px 20px 20px;
+    --padding-top: 15px;
+    --padding-bottom: 15px;
+    --padding-left: 15px;
+    --padding-right: 15px;
+}
+
+.elementor-1326 .elementor-element.elementor-element-4ae970c {
+    --display: flex;
+    --flex-direction: row;
+    --container-widget-width: calc( ( 1 - var( --container-widget-flex-grow)) * 100%);
+    --container-widget-height: 100%;
+    --container-widget-flex-grow: 1;
+    --container-widget-align-self: stretch;
+    --flex-wrap-mobile: wrap;
+    --align-items: flex-end;
+    --gap: 0px 0px;
+    --row-gap: 0px;
+    --column-gap: 0px;
+    --padding-top: 0px;
+    --padding-bottom: 0px;
+    --padding-left: 0px;
+    --padding-right: 0px;
+}
+
+.elementor-1326 .elementor-element.elementor-element-704bc61 .elementor-heading-title {
+    font-size: 30px;
+    font-weight: 500;
+    color: var( --e-global-color-primary);
+}
+
+.elementor-1326 .elementor-element.elementor-element-3c95a65 .elementor-heading-title {
+    font-size: 18px;
+    color: var( --e-global-color-primary);
+}
+
+.elementor-1326 .elementor-element.elementor-element-b9977e3 {
+    margin: -15px 0px calc(var(--kit-widget-spacing, 0px) + 0px) 0px;
+}
+
+.elementor-1326 .elementor-element.elementor-element-b9977e3 .elementor-heading-title {
+    font-size: 20px;
+    color: var( --e-global-color-primary);
+}
+
+.elementor-1326 .elementor-element.elementor-element-b175ceb {
+    color: #302F2F;
+}
+
+@media(max-width:1024px) {
+    .elementor-1326 .elementor-element.elementor-element-90dc87b {
+        --min-height: 300px;
+        --padding-top: 0px;
+        --padding-bottom: 0px;
+        --padding-left: 20px;
+        --padding-right: 20px;
+    }
+    .elementor-1326 .elementor-element.elementor-element-0f7ecd4 {
+        --flex-direction: column;
+        --container-widget-width: 100%;
+        --container-widget-height: initial;
+        --container-widget-flex-grow: 0;
+        --container-widget-align-self: initial;
+        --flex-wrap-mobile: wrap;
+    }
+    .elementor-1326 .elementor-element.elementor-element-0b95734 {
+        --padding-top: 10px;
+        --padding-bottom: 30px;
+        --padding-left: 30px;
+        --padding-right: 30px;
+    }
+}
+
+@media(max-width:767px) {
+    .elementor-1326 .elementor-element.elementor-element-90dc87b {
+        --min-height: 250px;
+        --padding-top: 0px;
+        --padding-bottom: 0px;
+        --padding-left: 20px;
+        --padding-right: 20px;
+    }
+    .elementor-1326 .elementor-element.elementor-element-d9b47c6 .elementor-heading-title {
+        font-size: 28px;
+    }
+    .elementor-1326 .elementor-element.elementor-element-11e8a25 .elementor-heading-title {
+        font-size: 18px;
+    }
+    .elementor-1326 .elementor-element.elementor-element-04bcae9 {
+        --padding-top: 0px;
+        --padding-bottom: 0px;
+        --padding-left: 0px;
+        --padding-right: 0px;
+    }
+    .elementor-1326 .elementor-element.elementor-element-0b95734 {
+        --padding-top: 2px;
+        --padding-bottom: 2px;
+        --padding-left: 2px;
+        --padding-right: 2px;
+    }
+    .elementor-1326 .elementor-element.elementor-element-704bc61 .elementor-heading-title {
+        font-size: 25px;
+    }
+    .elementor-1326 .elementor-element.elementor-element-3c95a65 .elementor-heading-title {
+        font-size: 16px;
+    }
+    .elementor-1326 .elementor-element.elementor-element-b9977e3 .elementor-heading-title {
+        font-size: 18px;
+    }
+}
+
+@media(min-width:768px) {
+    .elementor-1326 .elementor-element.elementor-element-34c3ae4 {
+        --width: 50%;
+    }
+    .elementor-1326 .elementor-element.elementor-element-04bcae9 {
+        --width: 50%;
+    }
+}
+
+@media(max-width:1024px) and (min-width:768px) {
+    .elementor-1326 .elementor-element.elementor-element-34c3ae4 {
+        --width: 100%;
+    }
+    .elementor-1326 .elementor-element.elementor-element-04bcae9 {
+        --width: 100%;
+    }
+}
+
+@media(min-width:1025px) {
+    .elementor-1326 .elementor-element.elementor-element-90dc87b:not(.elementor-motion-effects-element-type-background),
+    .elementor-1326 .elementor-element.elementor-element-90dc87b>.elementor-motion-effects-container>.elementor-motion-effects-layer {
+        background-attachment: scroll;
+    }
+}
