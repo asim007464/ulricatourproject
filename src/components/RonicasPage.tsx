@@ -1,6 +1,8 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useLayoutEffect } from "react";
+import { initScrollReveal } from "@/lib/scroll-reveal";
+import { initScrollCounters } from "@/lib/scroll-counters";
 
 const HERO_SLIDES = [
   "/wp-content/uploads/2026/02/jamaica-boat-2-scaled.jpg",
@@ -33,6 +35,96 @@ function loadScript(src: string): Promise<void> {
   });
 }
 
+function initHeaderMenus() {
+  const header = document.querySelector(".elementor-location-header");
+  if (!header) return () => {};
+
+  const updateHeaderOffset = () => {
+    const height = header.getBoundingClientRect().height;
+    document.documentElement.style.setProperty(
+      "--ronicas-header-offset",
+      `${Math.ceil(height)}px`
+    );
+  };
+
+  updateHeaderOffset();
+  window.addEventListener("resize", updateHeaderOffset);
+
+  const toggles = header.querySelectorAll<HTMLElement>(".elementor-menu-toggle");
+  const cleanups: Array<() => void> = [];
+
+  const closeToggle = (toggle: HTMLElement) => {
+    const dropdown = toggle.nextElementSibling;
+    toggle.classList.remove("elementor-active");
+    toggle.setAttribute("aria-expanded", "false");
+    if (dropdown?.classList.contains("elementor-nav-menu--dropdown")) {
+      dropdown.classList.remove("elementor-nav-menu--dropdown-open");
+      dropdown.setAttribute("aria-hidden", "true");
+    }
+  };
+
+  const closeAll = (except?: HTMLElement) => {
+    toggles.forEach((toggle) => {
+      if (toggle !== except) closeToggle(toggle);
+    });
+  };
+
+  toggles.forEach((toggle) => {
+    const dropdown = toggle.nextElementSibling;
+    if (!dropdown?.classList.contains("elementor-nav-menu--dropdown")) return;
+
+    const onToggle = (event: Event) => {
+      event.preventDefault();
+      event.stopPropagation();
+
+      const willOpen = !toggle.classList.contains("elementor-active");
+      closeAll(willOpen ? toggle : undefined);
+
+      toggle.classList.toggle("elementor-active", willOpen);
+      toggle.setAttribute("aria-expanded", String(willOpen));
+      dropdown.classList.toggle("elementor-nav-menu--dropdown-open", willOpen);
+      dropdown.setAttribute("aria-hidden", String(!willOpen));
+
+      if (willOpen) updateHeaderOffset();
+    };
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Enter" || event.key === " ") {
+        onToggle(event);
+      }
+    };
+
+    toggle.addEventListener("click", onToggle);
+    toggle.addEventListener("keydown", onKeyDown);
+    cleanups.push(() => toggle.removeEventListener("click", onToggle));
+    cleanups.push(() => toggle.removeEventListener("keydown", onKeyDown));
+
+    dropdown.querySelectorAll("a").forEach((link) => {
+      const onLinkClick = () => closeToggle(toggle);
+      link.addEventListener("click", onLinkClick);
+      cleanups.push(() => link.removeEventListener("click", onLinkClick));
+    });
+  });
+
+  const onDocumentClick = (event: MouseEvent) => {
+    const target = event.target as Node;
+    toggles.forEach((toggle) => {
+      if (!toggle.classList.contains("elementor-active")) return;
+      const dropdown = toggle.nextElementSibling;
+      if (toggle.contains(target) || dropdown?.contains(target)) return;
+      closeToggle(toggle);
+    });
+  };
+
+  document.addEventListener("click", onDocumentClick);
+  cleanups.push(() => document.removeEventListener("click", onDocumentClick));
+  cleanups.push(() =>
+    window.removeEventListener("resize", updateHeaderOffset)
+  );
+
+  return () => cleanups.forEach((cleanup) => cleanup());
+}
+
 export default function RonicasPage({
   bodyHtml,
   bodyClassName,
@@ -47,6 +139,15 @@ export default function RonicasPage({
     document
       .querySelectorAll(".e-con.e-parent:not(.e-lazyloaded)")
       .forEach((el) => el.classList.add("e-lazyloaded"));
+  }, [bodyHtml]);
+
+  useLayoutEffect(() => {
+    const cleanupReveal = initScrollReveal();
+    const cleanupCounters = initScrollCounters();
+    return () => {
+      cleanupReveal();
+      cleanupCounters();
+    };
   }, [bodyHtml]);
 
   useEffect(() => {
@@ -94,57 +195,24 @@ export default function RonicasPage({
       el.classList.add("qodef-qi--appeared");
     });
 
-    document.querySelectorAll(".elementor-invisible").forEach((el) => {
-      el.classList.remove("elementor-invisible");
-      el.classList.add("elementor-animation-fadeInRight");
-    });
+    const cleanupHeaderMenus = initHeaderMenus();
 
-    document.querySelectorAll(".elementor-menu-toggle").forEach((toggle) => {
-      toggle.addEventListener("click", () => {
-        const expanded = toggle.getAttribute("aria-expanded") === "true";
-        toggle.setAttribute("aria-expanded", expanded ? "false" : "true");
-        const dropdown = toggle.nextElementSibling;
-        if (dropdown) {
-          dropdown.setAttribute("aria-hidden", expanded ? "true" : "false");
-          dropdown.classList.toggle(
-            "elementor-nav-menu--dropdown-open",
-            !expanded
-          );
-        }
+    document
+      .querySelectorAll(
+        "#ronicas-site .elementor-location-footer a.elementor-social-icon[href]"
+      )
+      .forEach((link) => {
+        const href = link.getAttribute("href");
+        if (!href || href === "#") return;
+
+        link.setAttribute("rel", "noopener noreferrer");
+        link.setAttribute("target", "_blank");
       });
-    });
 
-    document.querySelectorAll(".elementor-counter-number").forEach((counter) => {
-      const target = Number(counter.getAttribute("data-to-value") || 0);
-      const duration = Number(counter.getAttribute("data-duration") || 2000);
-      const start = performance.now();
-
-      const tick = (now: number) => {
-        const progress = Math.min((now - start) / duration, 1);
-        const value = Math.floor(target * progress);
-        counter.textContent = value.toLocaleString();
-        if (progress < 1) requestAnimationFrame(tick);
-        else counter.textContent = target.toLocaleString();
-      };
-
-      requestAnimationFrame(tick);
-    });
-
-    const joinchat = document.querySelector(".joinchat");
-    const joinchatButton = document.querySelector(".joinchat__button");
-    const joinchatClose = document.querySelector(".joinchat__close");
-    const joinchatOpen = document.querySelector(".joinchat__open");
-
-    joinchatButton?.addEventListener("click", () => {
-      joinchat?.classList.add("joinchat--chatbox");
-    });
-    joinchatClose?.addEventListener("click", () => {
-      joinchat?.classList.remove("joinchat--chatbox");
-    });
-    joinchatOpen?.addEventListener("click", () => {
-      window.open("https://wa.me/18762958113", "_blank");
-    });
-  }, []);
+    return () => {
+      cleanupHeaderMenus();
+    };
+  }, [bodyHtml]);
 
   useEffect(() => {
     if (!loadBookingScripts) return;

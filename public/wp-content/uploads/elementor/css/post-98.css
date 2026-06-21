@@ -1858,7 +1858,7 @@ body.rtl .elementor-98 .elementor-element.elementor-element-9a2f60b {
     --container-widget-flex-grow: 0;
     --container-widget-align-self: initial;
     --flex-wrap-mobile: wrap;
-    --overflow: hidden;
+    --overflow: visible;
     --padding-top: 100px;
     --padding-bottom: 100px;
     --padding-left: 15px;
@@ -1902,6 +1902,7 @@ body.rtl .elementor-98 .elementor-element.elementor-element-9a2f60b {
 .elementor-98 .elementor-element.elementor-element-54bce2e .jeg-elementor-kit.jkit-testimonials .testimonials-track .testimonial-item .testimonial-box {
     background-color: var( --e-global-color-secondary);
     margin: 5px 3px 100px 3px;
+    padding: 36px 28px 30px;
     box-shadow: 0px 0px 2px 0px rgba(0, 0, 0, 0.18);
 }
 
@@ -1923,7 +1924,10 @@ body.rtl .elementor-98 .elementor-element.elementor-element-9a2f60b {
     color: var( --e-global-color-accent);
     font-size: 40px;
     margin-bottom: 20px;
-    padding: 0px 0px 0px 150px;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    width: 100%;
 }
 
 .elementor-98 .elementor-element.elementor-element-54bce2e .jeg-elementor-kit.jkit-testimonials .testimonials-track .testimonial-item .testimonial-box .icon-content svg {
@@ -1962,7 +1966,21 @@ body.rtl .elementor-98 .elementor-element.elementor-element-9a2f60b {
 }
 
 .elementor-98 .elementor-element.elementor-element-54bce2e .jeg-elementor-kit.jkit-testimonials.style-1 .testimonials-track .testimonial-item .testimonial-box .testimonial-slider .comment-bio {
-    bottom: -95px;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 10;
+    text-align: center;
+}
+
+.elementor-98 .elementor-element.elementor-element-54bce2e .jeg-elementor-kit.jkit-testimonials.style-1 .testimonials-track .testimonial-item .testimonial-box .testimonial-slider .comment-bio .profile-image {
+    margin-top: -30px;
+    margin-bottom: 0;
+}
+
+.elementor-98 .elementor-element.elementor-element-54bce2e .jeg-elementor-kit.jkit-testimonials .testimonials-track .testimonial-item .testimonial-box .profile-info {
+    margin-top: 10px;
 }
 
 .elementor-98 .elementor-element.elementor-element-54bce2e .jeg-elementor-kit.jkit-testimonials .tns-controls button span {
@@ -3557,12 +3575,15 @@ body.rtl .elementor-98 .elementor-element.elementor-element-9a2f60b {
     .elementor-element.elementor-element-54bce2e .jeg-elementor-kit.jkit-testimonials .testimonials-track:not(.tns-slider) {
         display: flex;
         flex-direction: row;
+        gap: 15px;
     }
 }
 
 @media (min-width: 1025px) {
     .elementor-element.elementor-element-54bce2e .jeg-elementor-kit.jkit-testimonials .testimonials-track:not(.tns-slider) .testimonial-item {
-        width: calc(3)
+        flex: 1 1 0;
+        min-width: 0;
+        width: auto;
     }
 }
 
@@ -3582,12 +3603,15 @@ body.rtl .elementor-98 .elementor-element.elementor-element-9a2f60b {
     .elementor-element.elementor-element-54bce2e .jeg-elementor-kit.jkit-testimonials .testimonials-track:not(.tns-slider) {
         display: flex;
         flex-direction: row;
+        gap: 10px;
     }
 }
 
 @media (min-width: 768px) and (max-width: 1024px) {
     .elementor-element.elementor-element-54bce2e .jeg-elementor-kit.jkit-testimonials .testimonials-track:not(.tns-slider) .testimonial-item {
-        width: calc(2)
+        flex: 1 1 0;
+        min-width: 0;
+        width: auto;
     }
 }
 
@@ -3612,7 +3636,9 @@ body.rtl .elementor-98 .elementor-element.elementor-element-9a2f60b {
 
 @media (max-width: 767px) {
     .elementor-element.elementor-element-54bce2e .jeg-elementor-kit.jkit-testimonials .testimonials-track:not(.tns-slider) .testimonial-item {
-        width: calc(1)
+        flex: 1 1 0;
+        min-width: 0;
+        width: auto;
     }
 }
 

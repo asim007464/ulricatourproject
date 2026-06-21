@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import WhatsAppWidget from "@/components/WhatsAppWidget";
 import {
   conditionalStylesheets,
   siteFonts,
@@ -56,7 +57,10 @@ export default function RootLayout({
           <link key={href} rel="stylesheet" href={href} media={media} />
         ))}
       </head>
-      <body suppressHydrationWarning>{children}</body>
+      <body suppressHydrationWarning>
+        {children}
+        <WhatsAppWidget />
+      </body>
     </html>
   );
 }
