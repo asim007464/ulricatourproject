@@ -231,7 +231,7 @@ export default function RonicasPage({
           const config = document.createElement("script");
           config.id = "enix-booking-data";
           config.textContent =
-            'window.enixBookingData = {"ajax_url":"#","nonce":"","i18n":{"booking_success":"Booking successful!","booking_failed":"Could not process booking. Please try again."}};';
+            'window.enixBookingData = {"ajax_url":"/api/booking","nonce":"","i18n":{"booking_success":"Booking saved! Redirecting to secure checkout...","booking_failed":"Could not process booking. Please try again."}};';
           document.body.appendChild(config);
         }
 
