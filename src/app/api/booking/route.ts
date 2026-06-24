@@ -1,11 +1,12 @@
 import { NextResponse } from "next/server";
 import {
   calculateBookingTotal,
-  findProductByPostId,
-  getProductPricing,
+  findProductByPostIdAsync,
+  getProductPricingAsync,
 } from "@/lib/products";
 import { sendBookingRequestNotification } from "@/lib/email";
 import { getSiteUrl } from "@/lib/env";
+import { saveOrder } from "@/lib/orders";
 import type { BookingDetails } from "@/lib/paypal";
 
 type BookingPayload = {
@@ -60,12 +61,12 @@ export async function POST(request: Request) {
       return wpError("Missing product.");
     }
 
-    const product = findProductByPostId(productId);
+    const product = await findProductByPostIdAsync(productId);
     if (!product) {
       return wpError("Unknown product.");
     }
 
-    const pricing = getProductPricing(product.slug);
+    const pricing = await getProductPricingAsync(product.slug);
     const productTitle = pricing.title;
 
     if (!pickupDate) {
@@ -104,6 +105,29 @@ export async function POST(request: Request) {
         customerMessage: payload.customer_message?.toString(),
       });
 
+      await saveOrder({
+        product_slug: product.slug,
+        product_title: productTitle,
+        order_type: "request",
+        status: "request",
+        customer_name: customerName,
+        customer_email: customerEmail,
+        customer_phone: payload.customer_phone?.toString() || null,
+        customer_address: payload.customer_address?.toString() || null,
+        customer_message: payload.customer_message?.toString() || null,
+        pickup_date: pickupDate,
+        dropoff_date: dropoffDate,
+        guests,
+        departure_location: departureLocation || null,
+        amount: calculateBookingTotal(
+          pricing,
+          guests,
+          departureLocation || undefined
+        ),
+        currency: "USD",
+        paypal_order_id: null,
+      });
+
       return wpSuccess({
         message:
           "Your booking request was sent successfully. We will contact you shortly.",
@@ -126,6 +150,25 @@ export async function POST(request: Request) {
         departureLocation: departureLocation || undefined,
         amount,
       };
+
+      await saveOrder({
+        product_slug: product.slug,
+        product_title: productTitle,
+        order_type: "pending",
+        status: "pending",
+        customer_name: null,
+        customer_email: null,
+        customer_phone: null,
+        customer_address: null,
+        customer_message: null,
+        pickup_date: pickupDate,
+        dropoff_date: dropoffDate,
+        guests,
+        departure_location: departureLocation || null,
+        amount,
+        currency: "USD",
+        paypal_order_id: null,
+      });
 
       const token = encodeBookingToken(booking);
       const siteUrl = getSiteUrl().replace(/\/$/, "");

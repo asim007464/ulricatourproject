@@ -3,8 +3,9 @@ import { capturePayPalOrder, type BookingDetails } from "@/lib/paypal";
 import { sendPurchaseNotification } from "@/lib/email";
 import {
   calculateBookingTotal,
-  getProductPricing,
+  getProductPricingAsync,
 } from "@/lib/products";
+import { saveOrder } from "@/lib/orders";
 
 function decodeBookingToken(token: string): BookingDetails {
   return JSON.parse(
@@ -12,8 +13,8 @@ function decodeBookingToken(token: string): BookingDetails {
   ) as BookingDetails;
 }
 
-function verifyBooking(booking: BookingDetails): BookingDetails {
-  const pricing = getProductPricing(booking.productSlug);
+async function verifyBooking(booking: BookingDetails): Promise<BookingDetails> {
+  const pricing = await getProductPricingAsync(booking.productSlug);
   const amount = calculateBookingTotal(
     pricing,
     booking.guests,
@@ -41,7 +42,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const booking = verifyBooking(decodeBookingToken(bookingToken));
+    const booking = await verifyBooking(decodeBookingToken(bookingToken));
     const capture = await capturePayPalOrder(orderId);
 
     const payer = capture?.payer;
@@ -49,6 +50,25 @@ export async function POST(request: Request) {
       .filter(Boolean)
       .join(" ");
     const payerEmail = payer?.email_address as string | undefined;
+
+    await saveOrder({
+      product_slug: booking.productSlug,
+      product_title: booking.productTitle,
+      order_type: "paid",
+      status: "paid",
+      customer_name: payerName || null,
+      customer_email: payerEmail || null,
+      customer_phone: null,
+      customer_address: null,
+      customer_message: null,
+      pickup_date: booking.pickupDate,
+      dropoff_date: booking.dropoffDate,
+      guests: booking.guests,
+      departure_location: booking.departureLocation || null,
+      amount: booking.amount,
+      currency: "USD",
+      paypal_order_id: orderId,
+    });
 
     await sendPurchaseNotification(
       booking,

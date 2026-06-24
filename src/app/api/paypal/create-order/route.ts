@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { createPayPalOrder, type BookingDetails } from "@/lib/paypal";
 import {
   calculateBookingTotal,
-  getProductPricing,
+  getProductPricingAsync,
 } from "@/lib/products";
 
 function decodeBookingToken(token: string): BookingDetails {
@@ -12,8 +12,8 @@ function decodeBookingToken(token: string): BookingDetails {
   return booking;
 }
 
-function verifyBooking(booking: BookingDetails): BookingDetails {
-  const pricing = getProductPricing(booking.productSlug);
+async function verifyBooking(booking: BookingDetails): Promise<BookingDetails> {
+  const pricing = await getProductPricingAsync(booking.productSlug);
   const amount = calculateBookingTotal(
     pricing,
     booking.guests,
@@ -40,7 +40,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const booking = verifyBooking(decodeBookingToken(bookingToken));
+    const booking = await verifyBooking(decodeBookingToken(bookingToken));
     const order = await createPayPalOrder(booking);
 
     return NextResponse.json({ id: order.id });
