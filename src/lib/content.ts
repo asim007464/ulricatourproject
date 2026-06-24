@@ -4,6 +4,13 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import type { DbProduct, DbSitePage } from "@/lib/supabase/types";
 import type { ProductPricing } from "@/lib/products";
 import { buildListingCardHtml } from "@/lib/product-template";
+import {
+  extractProductImageUrl,
+  protectSiteBrandImages,
+  syncProductImageInHtml,
+} from "@/lib/product-image";
+
+export { extractProductImageUrl, syncProductImageInHtml } from "@/lib/product-image";
 
 const PAGE_DEFAULTS: Record<
   string,
@@ -81,55 +88,6 @@ export function syncListingProductTitles(
       `$1${escapeHtml(product.title)}$3`
     );
   }
-
-  return result;
-}
-
-export function extractProductImageUrl(html: string): string | null {
-  const heroMatch = html.match(/background-image:url\("([^"]+)"\)/);
-  if (heroMatch?.[1] && !heroMatch[1].includes("RONICAS-LOGO")) {
-    return heroMatch[1];
-  }
-
-  const imageMatches = [
-    ...html.matchAll(/src="(\/wp-content\/uploads\/[^"]+)"/g),
-  ];
-
-  for (const match of imageMatches) {
-    const url = match[1];
-    if (
-      url.includes("RONICAS-LOGO") ||
-      url.includes("payment-icons") ||
-      url.includes("gemini-svg")
-    ) {
-      continue;
-    }
-    return url;
-  }
-
-  return null;
-}
-
-export function syncProductImageInHtml(
-  html: string,
-  imageUrl: string,
-  previousUrl?: string | null
-) {
-  if (!imageUrl) return html;
-
-  if (previousUrl && previousUrl !== imageUrl) {
-    return html.split(previousUrl).join(imageUrl);
-  }
-
-  let result = html.replace(
-    /background-image:url\("([^"]+)"\)/,
-    `background-image:url("${imageUrl}")`
-  );
-
-  result = result.replace(
-    /(<img[^>]+src=")(\/wp-content\/uploads\/[^"]+|https?:\/\/[^"]+)("[^>]*class="[^"]*attachment-full)/,
-    `$1${imageUrl}$3`
-  );
 
   return result;
 }
@@ -352,7 +310,13 @@ export async function getProductBodyHtml(
       product.image_url,
       extractProductImageUrl(sourceHtml)
     );
+  } else {
+    html = protectSiteBrandImages(html);
   }
 
-  return syncFormPricingInHtml(html, pricing, wordpressId);
+  return syncFormPricingInHtml(
+    protectSiteBrandImages(html),
+    pricing,
+    wordpressId
+  );
 }

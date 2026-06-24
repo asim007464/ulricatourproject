@@ -1,6 +1,7 @@
 import fs from "fs";
 import path from "path";
 import type { ProductPricing } from "@/lib/products";
+import { syncProductImageInHtml } from "@/lib/product-image";
 
 const TEMPLATE_SLUGS = {
   taxi: "one-way-transfer-mbj-airport-to-montego-bay-hotels",
@@ -141,14 +142,7 @@ export function buildProductHtml(options: {
   }
 
   if (options.imageUrl) {
-    html = html.replace(
-      /background-image:url\("([^"]+)"\)/,
-      `background-image:url("${options.imageUrl}")`
-    );
-    html = html.replace(
-      /(<img[^>]+src=")(\/wp-content\/uploads\/[^"]+|https?:\/\/[^"]+)("[^>]*class="[^"]*attachment-full)/,
-      `$1${options.imageUrl}$3`
-    );
+    html = syncProductImageInHtml(html, options.imageUrl);
   }
 
   return html;

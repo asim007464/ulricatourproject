@@ -3,7 +3,8 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { syncFormPricingInHtml, syncProductImageInHtml } from "@/lib/content";
+import { syncFormPricingInHtml } from "@/lib/content";
+import { syncProductImageInHtml, extractProductImageUrl } from "@/lib/product-image";
 import {
   buildProductHtml,
   generateWordpressId,
@@ -94,7 +95,7 @@ export async function updateProductAction(formData: FormData) {
     syncedBodyHtml = syncProductImageInHtml(
       syncedBodyHtml,
       imageUrl,
-      existing?.image_url || null
+      existing?.image_url || extractProductImageUrl(baseHtml)
     );
   }
 
