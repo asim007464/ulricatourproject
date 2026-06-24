@@ -24,6 +24,70 @@ export function getDefaultBodyClass(category: "taxi" | "tour", wordpressId: stri
   return `wp-singular product-template-default single single-product postid-${wordpressId} wp-embed-responsive wp-theme-hello-elementor theme-hello-elementor woocommerce woocommerce-page woocommerce-no-js qodef-qi--no-touch qi-addons-for-elementor-1.10 jkit-color-scheme hello-elementor-default elementor-default elementor-template-full-width elementor-kit-102 elementor-page-${pageId}`;
 }
 
+const LISTING_CARD_DEFAULTS = {
+  taxi: {
+    badge: "PRIVATE TRANSFER SERVICE",
+    buttonText: "BOOK TAXI",
+    productCat: "product_cat-book-taxi",
+    defaultImage: "/wp-content/uploads/2026/03/taxi-cards/highway-transfer.jpg",
+  },
+  tour: {
+    badge: "TOURS DEPARTING FROM",
+    buttonText: "BOOK TOUR",
+    productCat: "product_cat-book-tours",
+    defaultImage: "/wp-content/uploads/2026/06/Bob-Marley-museum-2.jpg",
+  },
+} as const;
+
+function escapeHtml(value: string) {
+  return value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
+export function buildListingCardHtml(options: {
+  category: "taxi" | "tour";
+  slug: string;
+  title: string;
+  wordpressId: string;
+  imageUrl?: string | null;
+}) {
+  const defaults = LISTING_CARD_DEFAULTS[options.category];
+  const imageUrl = options.imageUrl || defaults.defaultImage;
+  const safeTitle = escapeHtml(options.title);
+
+  return `<style id="loop-dynamic-236">
+                                .e-loop-item-${options.wordpressId} .elementor-element.elementor-element-382cd96:not(.elementor-motion-effects-element-type-background),
+                                .e-loop-item-${options.wordpressId} .elementor-element.elementor-element-382cd96>.elementor-motion-effects-container>.elementor-motion-effects-layer {
+                                    background-image: url("${imageUrl}");
+                                }
+                            </style>
+                            <div data-elementor-type="loop-item" data-elementor-id="236" class="elementor elementor-236 e-loop-item e-loop-item-${options.wordpressId} post-${options.wordpressId} product type-product status-publish has-post-thumbnail ${defaults.productCat} instock shipping-taxable purchasable product-type-rental"
+                                data-elementor-post-type="elementor_library" data-custom-edit-handle="1">
+                                <div class="elementor-element elementor-element-e694feb e-con-full e-flex e-con e-child" data-id="e694feb" data-element_type="container" data-e-type="container" data-settings="{&quot;background_background&quot;:&quot;classic&quot;}">
+                                    <div class="elementor-element elementor-element-382cd96 e-con-full e-flex e-con e-child" data-id="382cd96" data-element_type="container" data-e-type="container" data-settings="{&quot;background_background&quot;:&quot;classic&quot;}">
+                                    </div>
+                                    <div class="elementor-element elementor-element-63a7681 elementor-widget elementor-widget-heading" data-id="63a7681" data-element_type="widget" data-e-type="widget" data-widget_type="heading.default">
+                                        <h4 class="elementor-heading-title elementor-size-default">${defaults.badge}</h4>
+                                    </div>
+                                    <div class="elementor-element elementor-element-d3e1cf4 e-con-full e-flex e-con e-child" data-id="d3e1cf4" data-element_type="container" data-e-type="container">
+                                        <div class="elementor-element elementor-element-c4329ea elementor-widget elementor-widget-theme-post-title elementor-page-title elementor-widget-heading" data-id="c4329ea" data-element_type="widget" data-e-type="widget" data-widget_type="theme-post-title.default">
+                                            <h1 class="elementor-heading-title elementor-size-default">${safeTitle}</h1>
+                                        </div>
+                                        <div class="elementor-element elementor-element-6b8822f elementor-align-center elementor-widget elementor-widget-button" data-id="6b8822f" data-element_type="widget" data-e-type="widget" data-widget_type="button.default">
+                                            <a class="elementor-button elementor-button-link elementor-size-sm" href="/product/${options.slug}/">
+						<span class="elementor-button-content-wrapper">
+									<span class="elementor-button-text">${defaults.buttonText}</span>
+					</span>
+					</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>`;
+}
+
 export function buildProductHtml(options: {
   category: "taxi" | "tour";
   slug: string;

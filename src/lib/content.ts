@@ -3,6 +3,7 @@ import path from "path";
 import { createAdminClient } from "@/lib/supabase/admin";
 import type { DbProduct, DbSitePage } from "@/lib/supabase/types";
 import type { ProductPricing } from "@/lib/products";
+import { buildListingCardHtml } from "@/lib/product-template";
 
 const PAGE_DEFAULTS: Record<
   string,
@@ -133,6 +134,85 @@ export function syncProductImageInHtml(
   return result;
 }
 
+function getListingWordpressIds(html: string) {
+  const ids = new Set<string>();
+  for (const match of html.matchAll(/e-loop-item-(\d+)/g)) {
+    ids.add(match[1]);
+  }
+  return ids;
+}
+
+function insertBeforeLoopContainerClose(html: string, snippet: string) {
+  const containerOpen =
+    '<div class="elementor-loop-container elementor-grid" role="list">';
+  const containerIndex = html.indexOf(containerOpen);
+
+  if (containerIndex === -1) {
+    return `${html}\n${snippet}`;
+  }
+
+  let depth = 1;
+  let cursor = containerIndex + containerOpen.length;
+
+  while (cursor < html.length && depth > 0) {
+    const nextOpen = html.indexOf("<div", cursor);
+    const nextClose = html.indexOf("</div>", cursor);
+
+    if (nextClose === -1) {
+      break;
+    }
+
+    if (nextOpen !== -1 && nextOpen < nextClose) {
+      depth += 1;
+      cursor = nextOpen + 4;
+      continue;
+    }
+
+    depth -= 1;
+    if (depth === 0) {
+      return `${html.slice(0, nextClose)}\n${snippet}${html.slice(nextClose)}`;
+    }
+
+    cursor = nextClose + 6;
+  }
+
+  return `${html}\n${snippet}`;
+}
+
+export function appendMissingListingProducts(
+  html: string,
+  products: Array<
+    Pick<
+      DbProduct,
+      "slug" | "title" | "wordpress_id" | "image_url" | "category" | "body_html"
+    >
+  >
+) {
+  const existingIds = getListingWordpressIds(html);
+  const missing = products.filter(
+    (product) => product.wordpress_id && !existingIds.has(product.wordpress_id)
+  );
+
+  if (!missing.length) {
+    return html;
+  }
+
+  const cards = missing
+    .map((product) =>
+      buildListingCardHtml({
+        category: product.category as "taxi" | "tour",
+        slug: product.slug,
+        title: product.title,
+        wordpressId: product.wordpress_id!,
+        imageUrl:
+          product.image_url || extractProductImageUrl(product.body_html || ""),
+      })
+    )
+    .join("\n");
+
+  return insertBeforeLoopContainerClose(html, cards);
+}
+
 export function syncListingProductImages(
   html: string,
   products: Array<Pick<DbProduct, "wordpress_id" | "image_url">>
@@ -189,35 +269,45 @@ export async function getSitePageHtml(slug: string) {
     return fallback;
   }
 
+  const category = slug === "taxi-booking" ? "taxi" : "tour";
+  const { data: products } = await supabase
+    .from("products")
+    .select("slug, title, wordpress_id, image_url, category, body_html")
+    .eq("category", category)
+    .eq("active", true)
+    .order("title");
+
   const { data: page } = await supabase
     .from("site_pages")
     .select("*")
     .eq("slug", slug)
     .maybeSingle();
 
+  let html: string | null = null;
+
   if (!page) {
-    return fallback ? applySitePageOverrides(fallback, {
-      id: "",
-      slug,
-      title: PAGE_DEFAULTS[slug]?.title || slug,
-      hero_title: PAGE_DEFAULTS[slug]?.title || null,
-      hero_description: PAGE_DEFAULTS[slug]?.description || null,
-      body_html: fallback || "",
-      created_at: "",
-      updated_at: "",
-    }) : null;
+    html = fallback
+      ? applySitePageOverrides(fallback, {
+          id: "",
+          slug,
+          title: PAGE_DEFAULTS[slug]?.title || slug,
+          hero_title: PAGE_DEFAULTS[slug]?.title || null,
+          hero_description: PAGE_DEFAULTS[slug]?.description || null,
+          body_html: fallback || "",
+          created_at: "",
+          updated_at: "",
+        })
+      : null;
+  } else {
+    html = applySitePageOverrides(page.body_html, page as DbSitePage);
   }
 
-  const category = slug === "taxi-booking" ? "taxi" : "tour";
-  const { data: products } = await supabase
-    .from("products")
-    .select("slug, title, wordpress_id, image_url")
-    .eq("category", category)
-    .eq("active", true);
-
-  let html = applySitePageOverrides(page.body_html, page as DbSitePage);
+  if (!html) {
+    return null;
+  }
 
   if (products?.length) {
+    html = appendMissingListingProducts(html, products as DbProduct[]);
     html = syncListingProductTitles(html, products as DbProduct[]);
     html = syncListingProductImages(html, products as DbProduct[]);
   }
