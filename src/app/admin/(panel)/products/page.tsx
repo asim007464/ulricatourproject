@@ -2,6 +2,8 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/supabase/client";
 import ProductListWithFilters from "@/components/admin/ProductListWithFilters";
+import AdminPageTitle from "@/components/admin/AdminPageTitle";
+import { ProductsIcon } from "@/components/admin/AdminIcons";
 
 export const dynamic = "force-dynamic";
 
@@ -9,7 +11,7 @@ export default async function AdminProductsPage() {
   if (!isSupabaseConfigured()) {
     return (
       <div className="admin-card">
-        <h1>Travels / Taxi</h1>
+        <AdminPageTitle icon={<ProductsIcon />}>Travels / Taxi</AdminPageTitle>
         <p className="admin-error">
           Add Supabase keys to <code>.env.local</code> to use the admin panel.
         </p>
@@ -26,7 +28,7 @@ export default async function AdminProductsPage() {
 
   return (
     <div className="admin-card">
-      <h1>Travels / Taxi</h1>
+      <AdminPageTitle icon={<ProductsIcon />}>Travels / Taxi</AdminPageTitle>
       <div className="admin-page-header">
         <p className="admin-muted">
           Add, edit, or delete tours and transfers. Changes apply to new bookings

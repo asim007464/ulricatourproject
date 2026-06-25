@@ -1,6 +1,8 @@
 import { createClient } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/supabase/client";
 import { updateOrderStatusAction } from "../../actions";
+import AdminPageTitle from "@/components/admin/AdminPageTitle";
+import { OrdersIcon } from "@/components/admin/AdminIcons";
 
 export const dynamic = "force-dynamic";
 
@@ -14,7 +16,7 @@ export default async function AdminOrdersPage() {
   if (!isSupabaseConfigured()) {
     return (
       <div className="admin-card">
-        <h1>Orders</h1>
+        <AdminPageTitle icon={<OrdersIcon />}>Orders</AdminPageTitle>
         <p className="admin-error">
           Add Supabase keys to <code>.env.local</code> to use the admin panel.
         </p>
@@ -30,7 +32,7 @@ export default async function AdminOrdersPage() {
 
   return (
     <div className="admin-card">
-      <h1>Orders</h1>
+      <AdminPageTitle icon={<OrdersIcon />}>Orders</AdminPageTitle>
       <p className="admin-muted">
         All booking requests and paid PayPal orders appear here.
       </p>

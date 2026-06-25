@@ -11,10 +11,20 @@ export default async function AdminLoginPage({
   return (
     <div className="admin-login-wrap">
       <div className="admin-login-card">
-        <h1>Admin Login</h1>
-        <p className="admin-muted">
-          Sign in with your Supabase admin account.
-        </p>
+        <div className="admin-login-brand">
+          <img
+            src="/wp-content/uploads/2026/02/RONICAS-LOGO-BLACK-AND-GOLD.gif"
+            alt="Ronica's Splendid Tours"
+            width={72}
+            height={72}
+          />
+          <div>
+            <h1>Admin Login</h1>
+            <p className="admin-muted">
+              Sign in to manage orders, tours, and transfers.
+            </p>
+          </div>
+        </div>
         <LoginForm nextPath={params.next || "/admin/orders"} />
       </div>
     </div>
