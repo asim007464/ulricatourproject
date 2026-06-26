@@ -16,7 +16,7 @@ type ProductListWithFiltersProps = {
 };
 
 function categoryLabel(category: string) {
-  return category === "taxi" ? "Taxi / Transfer" : "Tour";
+  return category === "taxi" ? "Taxi / Transfer" : "Tours";
 }
 
 function categoryBadgeClass(category: string) {
@@ -104,7 +104,7 @@ export default function ProductListWithFilters({
           <label className="admin-filter-field admin-filter-search">
             <span>Search</span>
             <input
-              type="search"
+              type="text"
               placeholder="Name or slug..."
               value={query}
               onChange={(event) => setQuery(event.target.value)}
@@ -119,7 +119,7 @@ export default function ProductListWithFilters({
             >
               <option value="all">All categories</option>
               <option value="taxi">Taxi / Transfer</option>
-              <option value="tour">Tour</option>
+              <option value="tour">Tours</option>
             </select>
           </label>
 

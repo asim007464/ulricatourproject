@@ -11,7 +11,7 @@ function pagePath(slug: string) {
 }
 
 function pageTypeLabel(slug: string) {
-  return slug === "taxi-booking" ? "Taxi listing" : "Tour listing";
+  return slug === "taxi-booking" ? "Taxi listing" : "Tours listing";
 }
 
 function pageTypeBadgeClass(slug: string) {

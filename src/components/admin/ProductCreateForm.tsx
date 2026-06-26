@@ -45,7 +45,7 @@ export default function ProductCreateForm() {
         Category
         <select name="category" required defaultValue="taxi">
           <option value="taxi">Taxi / Transfer</option>
-          <option value="tour">Tour</option>
+          <option value="tour">Tours</option>
         </select>
       </label>
 
