@@ -5,6 +5,7 @@ import type { DbProduct, DbSitePage } from "@/lib/supabase/types";
 import type { ProductPricing } from "@/lib/products";
 import { buildListingCardHtml } from "@/lib/product-template";
 import {
+  extractProductImageUrl,
   extractProductDetailImageUrl,
   protectSiteBrandImages,
   syncProductCoverImageInHtml,
