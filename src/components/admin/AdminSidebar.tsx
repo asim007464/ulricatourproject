@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { logoutAction } from "@/app/admin/actions";
-import { LogoutIcon, OrdersIcon, PagesIcon, ProductsIcon, WebsiteIcon } from "@/components/admin/AdminIcons";
+import { LogoutIcon, MessagesIcon, OrdersIcon, PagesIcon, ProductsIcon, WebsiteIcon } from "@/components/admin/AdminIcons";
 
 type AdminSidebarProps = {
   onNavigate?: () => void;
@@ -11,12 +11,14 @@ type AdminSidebarProps = {
 
 const NAV_ITEMS = [
   { href: "/admin/orders", label: "Orders", icon: "orders" },
+  { href: "/admin/messages", label: "Messages", icon: "messages" },
   { href: "/admin/products", label: "Travels / Taxi", icon: "products" },
   { href: "/admin/pages", label: "Pages", icon: "pages" },
 ] as const;
 
 const NAV_ICONS = {
   orders: OrdersIcon,
+  messages: MessagesIcon,
   products: ProductsIcon,
   pages: PagesIcon,
 } as const;

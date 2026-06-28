@@ -4,12 +4,17 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { syncFormPricingInHtml } from "@/lib/content";
-import { syncProductImageInHtml, extractProductImageUrl } from "@/lib/product-image";
+import {
+  syncProductCoverImageInHtml,
+  syncProductDetailImageInHtml,
+  extractProductDetailImageUrl,
+} from "@/lib/product-image";
 import {
   buildProductHtml,
   generateWordpressId,
   slugifyTitle,
 } from "@/lib/product-template";
+import { parseBlockedDatesInput } from "@/lib/product-availability";
 import type { DbProduct } from "@/lib/supabase/types";
 
 export async function loginAction(formData: FormData) {
@@ -43,26 +48,41 @@ export async function updateProductAction(formData: FormData) {
   const description = formData.get("description")?.toString() || "";
   const bodyHtml = formData.get("body_html")?.toString() || "";
   const imageUrl = formData.get("image_url")?.toString().trim() || "";
+  const detailImageUrl =
+    formData.get("detail_image_url")?.toString().trim() || "";
   const basePrice = Number(formData.get("base_price") || 0);
   const basePaxLimit = Number(formData.get("base_pax_limit") || 4);
   const extraSurcharge = Number(formData.get("extra_surcharge") || 0);
   const maxSeats = Number(formData.get("max_seats") || 6);
   const minPax = Number(formData.get("min_pax") || 1);
   const active = formData.get("active") === "on";
-  const locationsRaw = formData.get("locations")?.toString() || "[]";
+  const locationsRaw = formData.get("locations")?.toString();
+  const blockedDates = parseBlockedDatesInput(
+    formData.get("blocked_dates")?.toString() || "[]"
+  );
 
   if (!slug || !title) {
     return { error: "Slug and title are required." };
   }
 
-  let locations = [];
-  try {
-    locations = JSON.parse(locationsRaw);
-  } catch {
-    return { error: "Locations must be valid JSON." };
-  }
-
   const supabase = await createClient();
+
+  const { data: existing } = await supabase
+    .from("products")
+    .select(
+      "wordpress_id, body_html, image_url, detail_image_url, locations"
+    )
+    .eq("slug", slug)
+    .maybeSingle();
+
+  let locations = (existing?.locations as DbProduct["locations"]) || [];
+  if (locationsRaw) {
+    try {
+      locations = JSON.parse(locationsRaw);
+    } catch {
+      return { error: "Locations must be valid JSON." };
+    }
+  }
 
   const pricing = {
     slug,
@@ -76,12 +96,6 @@ export async function updateProductAction(formData: FormData) {
     locations,
   };
 
-  const { data: existing } = await supabase
-    .from("products")
-    .select("wordpress_id, body_html, image_url")
-    .eq("slug", slug)
-    .maybeSingle();
-
   const baseHtml = bodyHtml || existing?.body_html || "";
   let syncedBodyHtml = baseHtml
     ? syncFormPricingInHtml(
@@ -91,11 +105,18 @@ export async function updateProductAction(formData: FormData) {
       )
     : null;
 
+  const resolvedDetailImage = detailImageUrl || imageUrl;
   if (syncedBodyHtml && imageUrl) {
-    syncedBodyHtml = syncProductImageInHtml(
+    syncedBodyHtml = syncProductCoverImageInHtml(syncedBodyHtml, imageUrl);
+  }
+  if (syncedBodyHtml && resolvedDetailImage) {
+    syncedBodyHtml = syncProductDetailImageInHtml(
       syncedBodyHtml,
-      imageUrl,
-      existing?.image_url || extractProductImageUrl(baseHtml)
+      resolvedDetailImage,
+      existing?.detail_image_url ||
+        extractProductDetailImageUrl(baseHtml) ||
+        existing?.image_url ||
+        null
     );
   }
 
@@ -106,6 +127,7 @@ export async function updateProductAction(formData: FormData) {
       description,
       body_html: syncedBodyHtml,
       image_url: imageUrl || null,
+      detail_image_url: detailImageUrl || null,
       base_price: basePrice,
       base_pax_limit: basePaxLimit,
       extra_surcharge: extraSurcharge,
@@ -113,6 +135,7 @@ export async function updateProductAction(formData: FormData) {
       min_pax: minPax,
       active,
       locations,
+      blocked_dates: blockedDates,
     })
     .eq("slug", slug);
 
@@ -133,20 +156,26 @@ export async function updateSitePageAction(formData: FormData) {
   const title = formData.get("title")?.toString().trim() || "";
   const heroTitle = formData.get("hero_title")?.toString().trim() || "";
   const heroDescription = formData.get("hero_description")?.toString().trim() || "";
-  const bodyHtml = formData.get("body_html")?.toString() || "";
 
-  if (!slug || !title || !bodyHtml) {
-    return { error: "Title and page content are required." };
+  if (!slug || !title) {
+    return { error: "Title is required." };
   }
 
   const supabase = await createClient();
+
+  const { data: existing } = await supabase
+    .from("site_pages")
+    .select("body_html")
+    .eq("slug", slug)
+    .maybeSingle();
+
   const { error } = await supabase
     .from("site_pages")
     .update({
       title,
       hero_title: heroTitle,
       hero_description: heroDescription,
-      body_html: bodyHtml,
+      body_html: existing?.body_html || "",
     })
     .eq("slug", slug);
 
@@ -193,13 +222,18 @@ export async function createProductAction(formData: FormData) {
   const category = formData.get("category")?.toString() as "taxi" | "tour";
   const description = formData.get("description")?.toString() || "";
   const imageUrl = formData.get("image_url")?.toString().trim() || "";
+  const detailImageUrl =
+    formData.get("detail_image_url")?.toString().trim() || "";
   const basePrice = Number(formData.get("base_price") || 0);
   const basePaxLimit = Number(formData.get("base_pax_limit") || 4);
   const extraSurcharge = Number(formData.get("extra_surcharge") || 0);
   const maxSeats = Number(formData.get("max_seats") || 6);
   const minPax = Number(formData.get("min_pax") || 1);
   const active = formData.get("active") === "on";
-  const locationsRaw = formData.get("locations")?.toString() || "[]";
+  const locations: DbProduct["locations"] = [];
+  const blockedDates = parseBlockedDatesInput(
+    formData.get("blocked_dates")?.toString() || "[]"
+  );
 
   if (!title || !category) {
     return { error: "Title and category are required." };
@@ -208,13 +242,6 @@ export async function createProductAction(formData: FormData) {
   const slug = slugInput || slugifyTitle(title);
   if (!slug) {
     return { error: "Could not generate a valid slug." };
-  }
-
-  let locations = [];
-  try {
-    locations = JSON.parse(locationsRaw);
-  } catch {
-    return { error: "Locations must be valid JSON." };
   }
 
   const supabase = await createClient();
@@ -249,7 +276,8 @@ export async function createProductAction(formData: FormData) {
     wordpressId,
     pricing,
     description,
-    imageUrl: imageUrl || undefined,
+    coverImageUrl: imageUrl || undefined,
+    detailImageUrl: detailImageUrl || imageUrl || undefined,
   });
 
   const { error } = await supabase.from("products").insert({
@@ -260,6 +288,7 @@ export async function createProductAction(formData: FormData) {
     description,
     body_html: bodyHtml,
     image_url: imageUrl || null,
+    detail_image_url: detailImageUrl || null,
     base_price: basePrice,
     base_pax_limit: basePaxLimit,
     extra_surcharge: extraSurcharge,
@@ -268,6 +297,7 @@ export async function createProductAction(formData: FormData) {
     duration_days: 1,
     rental_type: rentalType,
     locations,
+    blocked_dates: blockedDates,
     active,
   });
 
@@ -300,4 +330,28 @@ export async function deleteProductAction(formData: FormData) {
   revalidatePath("/taxi-booking");
   revalidatePath("/tours");
   redirect("/admin/products");
+}
+
+export async function updateContactMessageStatusAction(
+  formData: FormData
+): Promise<void> {
+  const messageId = formData.get("message_id")?.toString() || "";
+  const status = formData.get("status")?.toString() || "";
+
+  if (!messageId || !status) {
+    return;
+  }
+
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from("contact_messages")
+    .update({ status })
+    .eq("id", messageId);
+
+  if (error) {
+    console.error("Failed to update contact message:", error.message);
+    return;
+  }
+
+  revalidatePath("/admin/messages");
 }

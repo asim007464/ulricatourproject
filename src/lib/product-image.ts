@@ -2,9 +2,12 @@ const SITE_LOGO_URL =
   "/wp-content/uploads/2026/02/RONICAS-LOGO-BLACK-AND-GOLD.gif";
 
 const PRODUCT_HERO_ELEMENTS = [
-  "elementor-element-90dc87b",
   "elementor-element-b48889c",
+  "elementor-element-90dc87b",
 ] as const;
+
+/** Left column image on product booking pages (taxi + tour templates). */
+const PRODUCT_DETAIL_IMAGE_WIDGETS = ["920335f", "a1782f3"] as const;
 
 function isProtectedImageUrl(url: string) {
   return (
@@ -36,10 +39,14 @@ export function protectSiteBrandImages(html: string) {
 }
 
 export function extractProductImageUrl(html: string): string | null {
+  return extractProductCoverImageUrl(html) || extractProductDetailImageUrl(html);
+}
+
+export function extractProductCoverImageUrl(html: string): string | null {
   for (const elementId of PRODUCT_HERO_ELEMENTS) {
     const match = html.match(
       new RegExp(
-        `\\.elementor-element\\.${elementId}[\\s\\S]*?background-image:\\s*url\\("([^"]+)"\\)`,
+        `\\.${elementId}[\\s\\S]*?background-image:\\s*url\\("([^"]+)"\\)`,
         "i"
       )
     );
@@ -48,11 +55,15 @@ export function extractProductImageUrl(html: string): string | null {
     }
   }
 
-  const contentImagePattern =
-    /<img[^>]+src="([^"]+)"[^>]*class="[^"]*attachment-full[^"]*wp-image-(?!1194|1195)\d+/gi;
+  return null;
+}
 
-  for (const match of html.matchAll(contentImagePattern)) {
-    if (!isProtectedImageUrl(match[1])) {
+export function extractProductDetailImageUrl(html: string): string | null {
+  for (const widgetId of PRODUCT_DETAIL_IMAGE_WIDGETS) {
+    const match = html.match(
+      new RegExp(`data-id="${widgetId}"[\\s\\S]*?<img[^>]+src="([^"]+)"`, "i")
+    );
+    if (match?.[1] && !isProtectedImageUrl(match[1])) {
       return match[1];
     }
   }
@@ -65,7 +76,7 @@ function syncProductHeroBackground(html: string, imageUrl: string) {
 
   for (const elementId of PRODUCT_HERO_ELEMENTS) {
     const heroCssPattern = new RegExp(
-      `(\\.elementor-element\\.${elementId}[\\s\\S]*?background-image:\\s*url\\(")[^"]+("\\))`,
+      `(\\.${elementId}[\\s\\S]*?background-image:\\s*url\\(")[^"]+("\\))`,
       "i"
     );
 
@@ -77,28 +88,47 @@ function syncProductHeroBackground(html: string, imageUrl: string) {
   return result;
 }
 
-function syncProductContentImages(
+function syncWidgetImageByDataId(
   html: string,
-  imageUrl: string,
-  previousUrl?: string | null
+  dataId: string,
+  imageUrl: string
 ) {
-  return html.replace(
-    /(<img[^>]+src=")([^"]+)("[^>]*class="[^"]*attachment-full[^"]*wp-image-(?!1194|1195)\d+[^"]*")/gi,
-    (match, prefix: string, src: string, suffix: string) => {
-      if (isProtectedImageUrl(src)) {
-        return match;
-      }
-
-      if (previousUrl && src !== previousUrl) {
-        return match;
-      }
-
-      return `${prefix}${imageUrl}${suffix}`;
-    }
+  const widgetPattern = new RegExp(
+    `(data-id="${dataId}"[\\s\\S]*?<img\\b)([\\s\\S]*?)(\\/?>)`,
+    "i"
   );
+
+  if (!widgetPattern.test(html)) {
+    return html;
+  }
+
+  return html.replace(widgetPattern, (_match, prefix: string, attrs: string, suffix: string) => {
+    let nextAttrs = attrs
+      .replace(/\ssrc="[^"]*"/i, ` src="${imageUrl}"`)
+      .replace(/\ssrcset="[^"]*"/i, "")
+      .replace(/\ssizes="[^"]*"/i, "");
+
+    if (!/\ssrc="/i.test(nextAttrs)) {
+      nextAttrs = ` src="${imageUrl}"${nextAttrs}`;
+    }
+
+    return `${prefix}${nextAttrs}${suffix}`;
+  });
 }
 
-export function syncProductImageInHtml(
+/** Updates the hero banner on taxi/tour product pages (cover image). */
+export function syncProductCoverImageInHtml(html: string, imageUrl: string) {
+  if (!imageUrl) {
+    return protectSiteBrandImages(html);
+  }
+
+  let result = protectSiteBrandImages(html);
+  result = syncProductHeroBackground(result, imageUrl);
+  return protectSiteBrandImages(result);
+}
+
+/** Updates the left-column detail image above the calendar on product pages. */
+export function syncProductDetailImageInHtml(
   html: string,
   imageUrl: string,
   previousUrl?: string | null
@@ -108,17 +138,24 @@ export function syncProductImageInHtml(
   }
 
   let result = protectSiteBrandImages(html);
-  result = syncProductHeroBackground(result, imageUrl);
-  result = syncProductContentImages(result, imageUrl, previousUrl);
+
+  for (const widgetId of PRODUCT_DETAIL_IMAGE_WIDGETS) {
+    result = syncWidgetImageByDataId(result, widgetId, imageUrl);
+  }
 
   if (previousUrl && previousUrl !== imageUrl && !isProtectedImageUrl(previousUrl)) {
     const safePrevious = escapeRegExp(previousUrl);
-    const heroScopedPattern = new RegExp(
-      `(\\.elementor-element\\.(?:${PRODUCT_HERO_ELEMENTS.join("|")})[\\s\\S]*?background-image:\\s*url\\(")${safePrevious}("\\))`,
-      "gi"
-    );
-    result = result.replace(heroScopedPattern, `$1${imageUrl}$2`);
+    for (const widgetId of PRODUCT_DETAIL_IMAGE_WIDGETS) {
+      const previousPattern = new RegExp(
+        `(data-id="${widgetId}"[\\s\\S]*?<img[^>]+src=")${safePrevious}(")`,
+        "gi"
+      );
+      result = result.replace(previousPattern, `$1${imageUrl}$2`);
+    }
   }
 
   return protectSiteBrandImages(result);
 }
+
+/** @deprecated Use syncProductDetailImageInHtml */
+export const syncProductImageInHtml = syncProductDetailImageInHtml;

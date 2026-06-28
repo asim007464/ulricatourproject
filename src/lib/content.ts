@@ -5,12 +5,19 @@ import type { DbProduct, DbSitePage } from "@/lib/supabase/types";
 import type { ProductPricing } from "@/lib/products";
 import { buildListingCardHtml } from "@/lib/product-template";
 import {
-  extractProductImageUrl,
+  extractProductDetailImageUrl,
   protectSiteBrandImages,
-  syncProductImageInHtml,
+  syncProductCoverImageInHtml,
+  syncProductDetailImageInHtml,
 } from "@/lib/product-image";
 
-export { extractProductImageUrl, syncProductImageInHtml } from "@/lib/product-image";
+export {
+  extractProductImageUrl,
+  extractProductDetailImageUrl,
+  syncProductCoverImageInHtml,
+  syncProductDetailImageInHtml,
+  syncProductImageInHtml,
+} from "@/lib/product-image";
 
 const PAGE_DEFAULTS: Record<
   string,
@@ -296,7 +303,7 @@ export async function getProductBodyHtml(
 
   const { data: product } = await supabase
     .from("products")
-    .select("body_html, image_url")
+    .select("body_html, image_url, detail_image_url")
     .eq("slug", slug)
     .maybeSingle();
 
@@ -304,11 +311,19 @@ export async function getProductBodyHtml(
   if (!sourceHtml) return null;
 
   let html = sourceHtml;
+
   if (product?.image_url) {
-    html = syncProductImageInHtml(
+    html = syncProductCoverImageInHtml(html, product.image_url);
+  }
+
+  const detailImageUrl =
+    product?.detail_image_url || product?.image_url || null;
+
+  if (detailImageUrl) {
+    html = syncProductDetailImageInHtml(
       html,
-      product.image_url,
-      extractProductImageUrl(sourceHtml)
+      detailImageUrl,
+      extractProductDetailImageUrl(sourceHtml)
     );
   } else {
     html = protectSiteBrandImages(html);

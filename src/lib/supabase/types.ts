@@ -20,7 +20,9 @@ export type DbProduct = {
   description: string | null;
   body_html: string | null;
   image_url: string | null;
+  detail_image_url: string | null;
   locations: ProductLocation[];
+  blocked_dates: string[];
   active: boolean;
   created_at: string;
   updated_at: string;
@@ -59,3 +61,17 @@ export type DbSitePage = {
   created_at: string;
   updated_at: string;
 };
+
+export type DbContactMessage = {
+  id: string;
+  first_name: string;
+  last_name: string | null;
+  email: string;
+  phone: string | null;
+  subject: string | null;
+  message: string | null;
+  status: "new" | "read" | "archived";
+  created_at: string;
+};
+
+export type ContactMessageInsert = Omit<DbContactMessage, "id" | "created_at">;

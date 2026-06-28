@@ -7,6 +7,11 @@ import {
 import { sendBookingRequestNotification } from "@/lib/email";
 import { getSiteUrl } from "@/lib/env";
 import { saveOrder } from "@/lib/orders";
+import { createAdminClient } from "@/lib/supabase/admin";
+import {
+  isBookingRangeBlocked,
+  parseBlockedDates,
+} from "@/lib/product-availability";
 import type { BookingDetails } from "@/lib/paypal";
 
 type BookingPayload = {
@@ -28,14 +33,50 @@ function wpSuccess(data: Record<string, unknown>) {
 }
 
 function wpError(message: string, status = 400) {
-  return NextResponse.json(
-    { success: false, data: { message } },
-    { status }
-  );
+  return NextResponse.json({ success: false, data: { message } }, { status });
 }
 
 function encodeBookingToken(booking: BookingDetails) {
   return Buffer.from(JSON.stringify(booking)).toString("base64url");
+}
+
+async function getBlockedDatesForProduct(slug: string) {
+  const supabase = createAdminClient();
+  if (!supabase) return [];
+
+  const { data } = await supabase
+    .from("products")
+    .select("blocked_dates")
+    .eq("slug", slug)
+    .maybeSingle();
+
+  return parseBlockedDates(data?.blocked_dates);
+}
+
+export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url);
+  const action = searchParams.get("action");
+  const productId = searchParams.get("product_id");
+
+  if (action !== "enix_get_calendar_bookings") {
+    return wpError("Unsupported action.");
+  }
+
+  if (!productId) {
+    return wpError("Missing product.");
+  }
+
+  const product = await findProductByPostIdAsync(productId);
+  if (!product) {
+    return wpSuccess({ booked_dates: [], unavailable_dates: [] });
+  }
+
+  const unavailableDates = await getBlockedDatesForProduct(product.slug);
+
+  return wpSuccess({
+    booked_dates: [],
+    unavailable_dates: unavailableDates,
+  });
 }
 
 export async function POST(request: Request) {
@@ -81,6 +122,13 @@ export async function POST(request: Request) {
       return wpError("Please select a departure location.");
     }
 
+    const blockedDates = await getBlockedDatesForProduct(product.slug);
+    if (isBookingRangeBlocked(blockedDates, pickupDate, dropoffDate)) {
+      return wpError(
+        "One or more selected dates are unavailable. Please choose different dates."
+      );
+    }
+
     if (action === "enix_request_booking") {
       const customerName = payload.customer_name?.toString().trim() || "";
       const customerEmail = payload.customer_email?.toString().trim() || "";
@@ -122,7 +170,7 @@ export async function POST(request: Request) {
         amount: calculateBookingTotal(
           pricing,
           guests,
-          departureLocation || undefined
+          departureLocation || undefined,
         ),
         currency: "USD",
         paypal_order_id: null,
@@ -138,7 +186,7 @@ export async function POST(request: Request) {
       const amount = calculateBookingTotal(
         pricing,
         guests,
-        departureLocation || undefined
+        departureLocation || undefined,
       );
 
       const booking: BookingDetails = {
@@ -183,7 +231,7 @@ export async function POST(request: Request) {
     console.error("Booking API error:", error);
     return wpError(
       error instanceof Error ? error.message : "Could not process booking.",
-      500
+      500,
     );
   }
 }

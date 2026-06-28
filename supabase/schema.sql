@@ -16,7 +16,9 @@ create table if not exists public.products (
   description text,
   body_html text,
   image_url text,
+  detail_image_url text,
   locations jsonb not null default '[]'::jsonb,
+  blocked_dates jsonb not null default '[]'::jsonb,
   active boolean not null default true,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
@@ -59,9 +61,28 @@ create table if not exists public.site_pages (
 
 create index if not exists site_pages_slug_idx on public.site_pages (slug);
 
+create table if not exists public.contact_messages (
+  id uuid primary key default gen_random_uuid(),
+  first_name text not null,
+  last_name text,
+  email text not null,
+  phone text,
+  subject text,
+  message text,
+  status text not null default 'new' check (status in ('new', 'read', 'archived')),
+  created_at timestamptz not null default now()
+);
+
+create index if not exists contact_messages_created_at_idx
+  on public.contact_messages (created_at desc);
+
+create index if not exists contact_messages_status_idx
+  on public.contact_messages (status);
+
 alter table public.products enable row level security;
 alter table public.orders enable row level security;
 alter table public.site_pages enable row level security;
+alter table public.contact_messages enable row level security;
 
 create policy "Public can read active products"
   on public.products for select
@@ -90,6 +111,12 @@ create policy "Public can read site pages"
 
 create policy "Authenticated users manage site pages"
   on public.site_pages for all
+  to authenticated
+  using (true)
+  with check (true);
+
+create policy "Authenticated users manage contact messages"
+  on public.contact_messages for all
   to authenticated
   using (true)
   with check (true);

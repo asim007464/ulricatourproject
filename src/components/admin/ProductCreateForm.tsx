@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { createProductAction } from "@/app/admin/actions";
 import ProductImageField from "@/components/admin/ProductImageField";
+import ProductAvailabilityField from "@/components/admin/ProductAvailabilityField";
 
 export default function ProductCreateForm() {
   const router = useRouter();
@@ -54,7 +55,19 @@ export default function ProductCreateForm() {
         <textarea name="description" />
       </label>
 
-      <ProductImageField slug={slug || "new-product"} />
+      <ProductImageField
+        slug={slug || "new-product"}
+        name="image_url"
+        label="Cover image (listing card)"
+        helpText="Shown on the Tours / Taxi booking page cards. Upload a file or paste an image URL."
+      />
+
+      <ProductImageField
+        slug={slug || "new-product"}
+        name="detail_image_url"
+        label="Detail page image"
+        helpText="Shown on the product page when a customer clicks Book Now. Upload a file or paste an image URL."
+      />
 
       <label>
         Base price (USD)
@@ -88,10 +101,7 @@ export default function ProductCreateForm() {
         <input type="number" name="max_seats" min="1" defaultValue="6" required />
       </label>
 
-      <label>
-        Departure locations (JSON)
-        <textarea name="locations" defaultValue="[]" />
-      </label>
+      <ProductAvailabilityField />
 
       <label className="admin-checkbox">
         <input type="checkbox" name="active" defaultChecked />

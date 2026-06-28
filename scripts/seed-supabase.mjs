@@ -120,6 +120,8 @@ async function seedCategory(manifestPath, category) {
     const parsed = parseFormAttributes(html);
     const description = extractDescription(html);
 
+    const imageUrl = extractProductImageUrl(html);
+
     const row = {
       slug: product.slug,
       wordpress_id: parsed.wordpress_id,
@@ -134,7 +136,8 @@ async function seedCategory(manifestPath, category) {
       rental_type: parsed.rental_type,
       description,
       body_html: html,
-      image_url: extractProductImageUrl(html),
+      image_url: imageUrl,
+      detail_image_url: imageUrl,
       locations: parsed.locations,
       active: true,
     };

@@ -1,16 +1,10 @@
 import { createClient } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/supabase/client";
-import { updateOrderStatusAction } from "../../actions";
+import AdminOrderList from "@/components/admin/AdminOrderList";
 import AdminPageTitle from "@/components/admin/AdminPageTitle";
 import { OrdersIcon } from "@/components/admin/AdminIcons";
 
 export const dynamic = "force-dynamic";
-
-function badgeClass(orderType: string) {
-  if (orderType === "paid") return "admin-badge admin-badge-paid";
-  if (orderType === "request") return "admin-badge admin-badge-request";
-  return "admin-badge admin-badge-pending";
-}
 
 export default async function AdminOrdersPage() {
   if (!isSupabaseConfigured()) {
@@ -30,12 +24,23 @@ export default async function AdminOrdersPage() {
     .select("*")
     .order("created_at", { ascending: false });
 
+  const orderCount = orders?.length ?? 0;
+
   return (
     <div className="admin-card">
       <AdminPageTitle icon={<OrdersIcon />}>Orders</AdminPageTitle>
-      <p className="admin-muted">
-        All booking requests and paid PayPal orders appear here.
-      </p>
+
+      <div className="admin-page-header">
+        <p className="admin-muted admin-page-intro">
+          All booking requests and paid PayPal orders appear here. Click a row to
+          view full details.
+        </p>
+        {orderCount > 0 ? (
+          <span className="admin-toolbar__count">
+            {orderCount} order{orderCount === 1 ? "" : "s"}
+          </span>
+        ) : null}
+      </div>
 
       {error ? (
         <p className="admin-error">
@@ -45,67 +50,14 @@ export default async function AdminOrdersPage() {
       ) : null}
 
       {!orders?.length ? (
-        <p className="admin-muted">No orders yet.</p>
+        <div className="admin-empty-state">
+          <p className="admin-empty-state__title">No orders yet</p>
+          <p className="admin-muted">
+            New bookings from the website will show up here automatically.
+          </p>
+        </div>
       ) : (
-        <table className="admin-table">
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Product</th>
-              <th>Customer</th>
-              <th>Trip</th>
-              <th>Amount</th>
-              <th>Type</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            {orders.map((order) => (
-              <tr key={order.id}>
-                <td>{new Date(order.created_at).toLocaleString()}</td>
-                <td>{order.product_title}</td>
-                <td>
-                  <div>{order.customer_name || "—"}</div>
-                  <div className="admin-muted">{order.customer_email || ""}</div>
-                  <div className="admin-muted">{order.customer_phone || ""}</div>
-                </td>
-                <td>
-                  <div>Pick-up: {order.pickup_date}</div>
-                  <div>Drop-off: {order.dropoff_date}</div>
-                  <div>Guests: {order.guests}</div>
-                  {order.departure_location ? (
-                    <div>From: {order.departure_location}</div>
-                  ) : null}
-                </td>
-                <td>
-                  {order.amount != null
-                    ? `$${Number(order.amount).toFixed(2)}`
-                    : "—"}
-                </td>
-                <td>
-                  <span className={badgeClass(order.order_type)}>
-                    {order.order_type}
-                  </span>
-                </td>
-                <td>
-                  <form action={updateOrderStatusAction} className="admin-form">
-                    <input type="hidden" name="order_id" value={order.id} />
-                    <select name="status" defaultValue={order.status}>
-                      <option value="pending">pending</option>
-                      <option value="paid">paid</option>
-                      <option value="request">request</option>
-                      <option value="confirmed">confirmed</option>
-                      <option value="cancelled">cancelled</option>
-                    </select>
-                    <button type="submit" className="admin-btn admin-btn-secondary">
-                      Update
-                    </button>
-                  </form>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <AdminOrderList orders={orders} />
       )}
     </div>
   );

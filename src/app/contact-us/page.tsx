@@ -12,6 +12,10 @@ export default function ContactPage() {
   );
 
   return (
-    <RonicasPage bodyHtml={bodyHtml} bodyClassName={CONTACT_BODY_CLASS} />
+    <RonicasPage
+      bodyHtml={bodyHtml}
+      bodyClassName={CONTACT_BODY_CLASS}
+      loadContactScripts
+    />
   );
 }

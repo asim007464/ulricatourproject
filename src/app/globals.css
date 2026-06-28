@@ -20,6 +20,11 @@ body {
   display: none !important;
 }
 
+/* WooCommerce photoswipe shell (removed from HTML; hide if any remain) */
+#ronicas-site .pswp {
+  display: none !important;
+}
+
 .joinchat--ronicas {
   z-index: 10002;
 }
@@ -27,6 +32,25 @@ body {
 .joinchat--ronicas .joinchat__open {
   text-decoration: none;
   color: inherit;
+}
+
+.ronicas-contact-form-message {
+  margin: 0 0 1rem;
+  padding: 0.9rem 1rem;
+  border-radius: 8px;
+  font-weight: 600;
+}
+
+.ronicas-contact-form-message--success {
+  color: #166534;
+  background: #edf7ed;
+  border: 1px solid #b7dfb9;
+}
+
+.ronicas-contact-form-message--error {
+  color: #b42318;
+  background: #fef3f2;
+  border: 1px solid #fecdca;
 }
 
 /* Elementor lazy-load backgrounds (from WP head) */
@@ -234,7 +258,38 @@ body {
 }
 
 #ronicas-site .jeg-elementor-kit.jkit-icon-box:hover .jkit-icon-box-wrapper {
-  background-color: #fff !important;
+  background-color: transparent !important;
+}
+
+/* Footer contact blocks — dark background, keep light text readable on hover */
+#ronicas-site .elementor-location-footer .jkit-icon-box-wrapper.hover-from-left::before {
+  display: none !important;
+}
+
+#ronicas-site .elementor-location-footer .jeg-elementor-kit.jkit-icon-box .jkit-icon-box-wrapper {
+  transition: color 0.2s ease;
+}
+
+#ronicas-site .elementor-location-footer .jeg-elementor-kit.jkit-icon-box:hover .jkit-icon-box-wrapper {
+  background-color: transparent !important;
+  border-radius: 0;
+}
+
+#ronicas-site .elementor-location-footer .jeg-elementor-kit.jkit-icon-box:hover .title,
+#ronicas-site .elementor-location-footer .jeg-elementor-kit.jkit-icon-box:hover .icon-box-description,
+#ronicas-site .elementor-location-footer .jeg-elementor-kit.jkit-icon-box:hover .icon-box-link {
+  color: var(--e-global-color-5720c4c, #ff671e) !important;
+}
+
+#ronicas-site .elementor-location-footer .jeg-elementor-kit.jkit-icon-box:hover .icon-box > .icon {
+  background-color: var(--e-global-color-secondary, #fff) !important;
+  color: var(--e-global-color-5720c4c, #ff671e) !important;
+}
+
+#ronicas-site .elementor-location-footer .jeg-elementor-kit.jkit-icon-box:hover .icon-box > .icon svg,
+#ronicas-site .elementor-location-footer .jeg-elementor-kit.jkit-icon-box:hover .icon-box > .icon i {
+  fill: var(--e-global-color-5720c4c, #ff671e) !important;
+  color: var(--e-global-color-5720c4c, #ff671e) !important;
 }
 
 #ronicas-site .enix-cal-cell.available:hover {
@@ -243,6 +298,25 @@ body {
 
 p#billing_confirm_email_field {
   margin-left: 26px !important;
+}
+
+/* Product detail page — left column image (title area, above calendar) */
+.elementor-1158 .elementor-element.elementor-element-920335f,
+.elementor-1326 .elementor-element.elementor-element-a1782f3 {
+  width: 100%;
+  overflow: hidden;
+  border-radius: 12px;
+}
+
+.elementor-1158 .elementor-element.elementor-element-920335f img,
+.elementor-1326 .elementor-element.elementor-element-a1782f3 img {
+  display: block;
+  width: 100%;
+  height: clamp(160px, 22vw, 240px);
+  max-height: 240px;
+  object-fit: cover;
+  object-position: center;
+  border-radius: 12px;
 }
 
 /* Product detail hero banner (taxi + tour) — match Elementor breakpoints */

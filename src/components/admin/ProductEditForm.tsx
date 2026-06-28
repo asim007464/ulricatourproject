@@ -1,9 +1,10 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 import { deleteProductAction, updateProductAction } from "@/app/admin/actions";
 import ProductImageField from "@/components/admin/ProductImageField";
+import ProductAvailabilityField from "@/components/admin/ProductAvailabilityField";
 import type { DbProduct } from "@/lib/supabase/types";
 
 type ProductEditFormProps = {
@@ -12,27 +13,49 @@ type ProductEditFormProps = {
 
 export default function ProductEditForm({ product }: ProductEditFormProps) {
   const router = useRouter();
+  const statusRef = useRef<HTMLDivElement>(null);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [deleting, setDeleting] = useState(false);
+  const [isPending, startTransition] = useTransition();
+
+  useEffect(() => {
+    if (!message && !error) {
+      return;
+    }
+
+    statusRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+
+    if (!message) {
+      return;
+    }
+
+    const timer = window.setTimeout(() => {
+      setMessage("");
+    }, 5000);
+
+    return () => window.clearTimeout(timer);
+  }, [message, error]);
 
   return (
     <form
       className="admin-form"
-      action={async (formData) => {
-        setMessage("");
-        setError("");
-        const result = await updateProductAction(formData);
-        if (result?.error) {
-          setError(result.error);
-          return;
-        }
-        setMessage("Product updated successfully.");
+      action={(formData) => {
+        startTransition(async () => {
+          setMessage("");
+          setError("");
+
+          const result = await updateProductAction(formData);
+          if (result?.error) {
+            setError(result.error);
+            return;
+          }
+
+          setMessage("Product updated successfully.");
+          router.refresh();
+        });
       }}
     >
-      {error ? <p className="admin-error">{error}</p> : null}
-      {message ? <p className="admin-success">{message}</p> : null}
-
       <input type="hidden" name="slug" value={product.slug} />
       <input type="hidden" name="rental_type" value={product.rental_type} />
 
@@ -46,7 +69,21 @@ export default function ProductEditForm({ product }: ProductEditFormProps) {
         <textarea name="description" defaultValue={product.description || ""} />
       </label>
 
-      <ProductImageField slug={product.slug} initialUrl={product.image_url} />
+      <ProductImageField
+        slug={product.slug}
+        name="image_url"
+        label="Cover image (listing card)"
+        helpText="Shown on the Tours / Taxi booking page cards. Upload a file or paste an image URL."
+        initialUrl={product.image_url}
+      />
+
+      <ProductImageField
+        slug={product.slug}
+        name="detail_image_url"
+        label="Detail page image"
+        helpText="Shown on the product page when a customer clicks Book Now. Upload a file or paste an image URL."
+        initialUrl={product.detail_image_url}
+      />
 
       <label>
         Base price (USD)
@@ -105,26 +142,7 @@ export default function ProductEditForm({ product }: ProductEditFormProps) {
         />
       </label>
 
-      <label>
-        Page content (HTML)
-        <textarea
-          name="body_html"
-          className="admin-html-editor"
-          defaultValue={product.body_html || ""}
-        />
-      </label>
-      <p className="admin-muted">
-        Full tour/transfer page HTML. Pricing fields above are synced into the
-        booking form automatically when you save.
-      </p>
-
-      <label>
-        Departure locations (JSON)
-        <textarea
-          name="locations"
-          defaultValue={JSON.stringify(product.locations || [], null, 2)}
-        />
-      </label>
+      <ProductAvailabilityField initialDates={product.blocked_dates ?? []} />
 
       <label className="admin-checkbox">
         <input
@@ -135,13 +153,29 @@ export default function ProductEditForm({ product }: ProductEditFormProps) {
         Active on website
       </label>
 
+      <div ref={statusRef} className="admin-form-status" aria-live="polite">
+        {isPending ? (
+          <p className="admin-status-banner admin-status-banner--loading">
+            Saving changes...
+          </p>
+        ) : null}
+        {error ? (
+          <p className="admin-status-banner admin-status-banner--error">{error}</p>
+        ) : null}
+        {!isPending && message ? (
+          <p className="admin-status-banner admin-status-banner--success">
+            {message}
+          </p>
+        ) : null}
+      </div>
+
       <div className="admin-form-actions">
-        <button type="submit" className="admin-btn">
-          Update product
+        <button type="submit" className="admin-btn admin-btn-blue" disabled={isPending || deleting}>
+          {isPending ? "Saving..." : message ? "Updated" : "Update product"}
         </button>
         <button
           type="button"
-          className="admin-btn admin-btn-secondary"
+          className="admin-btn admin-btn-black"
           onClick={() => router.push("/admin/products")}
         >
           Back

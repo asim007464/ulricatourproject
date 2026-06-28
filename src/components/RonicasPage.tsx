@@ -6,6 +6,7 @@ type RonicasPageProps = {
   bodyClassName: string;
   enableHeroSlideshow?: boolean;
   loadBookingScripts?: boolean;
+  loadContactScripts?: boolean;
 };
 
 export default function RonicasPage({
@@ -13,6 +14,7 @@ export default function RonicasPage({
   bodyClassName,
   enableHeroSlideshow = false,
   loadBookingScripts = false,
+  loadContactScripts = false,
 }: RonicasPageProps) {
   const html = normalizeSiteHtml(bodyHtml);
 
@@ -27,6 +29,7 @@ export default function RonicasPage({
         bodyClassName={bodyClassName}
         enableHeroSlideshow={enableHeroSlideshow}
         loadBookingScripts={loadBookingScripts}
+        loadContactScripts={loadContactScripts}
       />
     </>
   );

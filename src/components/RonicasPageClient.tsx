@@ -17,6 +17,7 @@ type RonicasPageClientProps = {
   bodyClassName: string;
   enableHeroSlideshow?: boolean;
   loadBookingScripts?: boolean;
+  loadContactScripts?: boolean;
 };
 
 function loadScript(src: string): Promise<void> {
@@ -39,6 +40,7 @@ export default function RonicasPageClient({
   bodyClassName,
   enableHeroSlideshow = false,
   loadBookingScripts = false,
+  loadContactScripts = false,
 }: RonicasPageClientProps) {
   useEffect(() => {
     document.body.className = bodyClassName;
@@ -163,6 +165,28 @@ export default function RonicasPageClient({
       cancelled = true;
     };
   }, [loadBookingScripts]);
+
+  useEffect(() => {
+    if (!loadContactScripts) return;
+
+    let cancelled = false;
+
+    const initContactForm = async () => {
+      try {
+        await loadScript("/contact-form.js");
+      } catch (error) {
+        if (!cancelled) {
+          console.warn("Contact form script failed to load", error);
+        }
+      }
+    };
+
+    void initContactForm();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [loadContactScripts]);
 
   return null;
 }

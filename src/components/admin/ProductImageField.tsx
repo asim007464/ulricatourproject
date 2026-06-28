@@ -4,11 +4,17 @@ import { useRef, useState } from "react";
 
 type ProductImageFieldProps = {
   slug: string;
+  name: string;
+  label: string;
+  helpText: string;
   initialUrl?: string | null;
 };
 
 export default function ProductImageField({
   slug,
+  name,
+  label,
+  helpText,
   initialUrl,
 }: ProductImageFieldProps) {
   const [imageUrl, setImageUrl] = useState(initialUrl || "");
@@ -56,7 +62,7 @@ export default function ProductImageField({
   return (
     <div className="admin-image-field">
       <label>
-        Product image
+        {label}
         <input
           ref={fileInputRef}
           type="file"
@@ -70,7 +76,7 @@ export default function ProductImageField({
         Image URL
         <input
           type="url"
-          name="image_url"
+          name={name}
           value={imageUrl}
           onChange={(event) => setImageUrl(event.target.value)}
           placeholder="https://..."
@@ -83,13 +89,10 @@ export default function ProductImageField({
       {imageUrl ? (
         <div className="admin-image-preview">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={imageUrl} alt="Product preview" />
+          <img src={imageUrl} alt={`${label} preview`} />
         </div>
       ) : (
-        <p className="admin-muted">
-          Upload a new image or paste an image URL. This updates the product
-          photo on the page and the listing card.
-        </p>
+        <p className="admin-muted">{helpText}</p>
       )}
     </div>
   );

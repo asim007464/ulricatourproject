@@ -7,6 +7,8 @@
   --admin-bg: #f4f0e6;
   --admin-surface: #ffffff;
   --admin-border: #e3d9c8;
+  --admin-input-border: #ebe3d6;
+  --admin-input-border-focus: #d8cdb8;
   --admin-muted: #5f6b73;
   --admin-sidebar-width: 260px;
 }
@@ -79,7 +81,11 @@ body:has(.admin-layout) .joinchat--ronicas {
   flex-direction: column;
   width: var(--admin-sidebar-width);
   height: 100vh;
-  background: linear-gradient(180deg, var(--admin-primary) 0%, var(--admin-primary-dark) 100%);
+  background: linear-gradient(
+    180deg,
+    var(--admin-primary) 0%,
+    var(--admin-primary-dark) 100%
+  );
   color: #fff;
   box-shadow: 4px 0 24px rgba(0, 0, 0, 0.12);
 }
@@ -96,7 +102,9 @@ body:has(.admin-layout) .joinchat--ronicas {
   color: #fff;
   text-decoration: none;
   border-radius: 12px;
-  transition: background-color 0.15s ease, opacity 0.15s ease;
+  transition:
+    background-color 0.15s ease,
+    opacity 0.15s ease;
 }
 
 .admin-sidebar a.admin-sidebar__logo,
@@ -182,7 +190,10 @@ body:has(.admin-layout) .joinchat--ronicas {
   font-weight: 500;
   text-align: left;
   cursor: pointer;
-  transition: background-color 0.15s ease, color 0.15s ease, transform 0.15s ease;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease,
+    transform 0.15s ease;
 }
 
 .admin-sidebar a.admin-sidebar__link,
@@ -206,7 +217,11 @@ body:has(.admin-layout) .joinchat--ronicas {
 }
 
 .admin-sidebar__link--active {
-  background: linear-gradient(90deg, rgba(255, 103, 30, 0.22), rgba(255, 103, 30, 0.08));
+  background: linear-gradient(
+    90deg,
+    rgba(255, 103, 30, 0.22),
+    rgba(255, 103, 30, 0.08)
+  );
   color: #fff;
   box-shadow: inset 3px 0 0 var(--admin-accent);
 }
@@ -430,19 +445,70 @@ body:has(.admin-layout) .joinchat--ronicas {
 .admin-form select {
   width: 100%;
   padding: 0.75rem 0.85rem;
-  border: 1px solid var(--admin-border);
+  border: 1px solid var(--admin-input-border);
   border-radius: 10px;
   font: inherit;
+  color: #1f1f1f;
   background: #fff;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  box-shadow: inset 0 1px 2px rgba(0, 56, 57, 0.03);
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.admin-form input::placeholder,
+.admin-form textarea::placeholder {
+  color: #a8a29e;
 }
 
 .admin-form input:focus,
 .admin-form textarea:focus,
 .admin-form select:focus {
   outline: none;
-  border-color: var(--admin-accent);
-  box-shadow: 0 0 0 3px rgba(255, 103, 30, 0.15);
+  border-color: var(--admin-input-border-focus);
+  box-shadow:
+    inset 0 1px 2px rgba(0, 56, 57, 0.03),
+    0 0 0 3px rgba(255, 103, 30, 0.12);
+}
+
+/* WordPress theme reset uses dark #666 input borders — soften admin fields */
+.admin-layout .admin-form input[type="text"],
+.admin-layout .admin-form input[type="url"],
+.admin-layout .admin-form input[type="number"],
+.admin-layout .admin-form input[type="email"],
+.admin-layout .admin-form input[type="password"],
+.admin-layout .admin-form input[type="search"],
+.admin-layout .admin-form input[type="tel"],
+.admin-layout .admin-form input[type="date"],
+.admin-layout .admin-form input[type="file"],
+.admin-layout .admin-form textarea,
+.admin-layout .admin-form select,
+.admin-layout .admin-image-field input[type="text"],
+.admin-layout .admin-image-field input[type="url"],
+.admin-layout .admin-image-field input[type="file"] {
+  border: 1px solid var(--admin-input-border) !important;
+  border-radius: 10px !important;
+  background: #fff !important;
+  color: #1f1f1f !important;
+  box-shadow: inset 0 1px 2px rgba(0, 56, 57, 0.03);
+}
+
+.admin-layout .admin-form input[type="text"]:focus,
+.admin-layout .admin-form input[type="url"]:focus,
+.admin-layout .admin-form input[type="number"]:focus,
+.admin-layout .admin-form input[type="email"]:focus,
+.admin-layout .admin-form input[type="password"]:focus,
+.admin-layout .admin-form input[type="search"]:focus,
+.admin-layout .admin-form input[type="tel"]:focus,
+.admin-layout .admin-form input[type="date"]:focus,
+.admin-layout .admin-form textarea:focus,
+.admin-layout .admin-form select:focus,
+.admin-layout .admin-image-field input[type="text"]:focus,
+.admin-layout .admin-image-field input[type="url"]:focus {
+  border-color: var(--admin-input-border-focus) !important;
+  box-shadow:
+    inset 0 1px 2px rgba(0, 56, 57, 0.03),
+    0 0 0 3px rgba(255, 103, 30, 0.12) !important;
 }
 
 .admin-form textarea {
@@ -463,7 +529,9 @@ body:has(.admin-layout) .joinchat--ronicas {
   font-weight: 600;
   cursor: pointer;
   text-decoration: none;
-  transition: background-color 0.15s ease, transform 0.15s ease;
+  transition:
+    background-color 0.15s ease,
+    transform 0.15s ease;
 }
 
 .admin-btn:hover {
@@ -479,12 +547,265 @@ body:has(.admin-layout) .joinchat--ronicas {
   background: #e0d4bc;
 }
 
+.admin-btn-success {
+  background: #137333;
+  color: #fff;
+}
+
+.admin-btn-success:hover {
+  background: #0f5c2a;
+  color: #fff;
+}
+
+.admin-btn-teal {
+  background: var(--admin-primary);
+  color: #fff;
+  border: 2px solid var(--admin-primary-dark);
+}
+
+.admin-btn-teal:hover {
+  background: var(--admin-primary-dark);
+  color: #fff;
+  border-color: #001f20;
+}
+
+/* WordPress theme reset — restore backgrounds on all admin buttons & button links */
+.admin-login-wrap button[class*="admin-btn"],
+.admin-layout button[class*="admin-btn"],
+.admin-layout a[class*="admin-btn"] {
+  box-shadow: none !important;
+  text-decoration: none !important;
+  -webkit-appearance: none !important;
+  appearance: none !important;
+}
+
+.admin-login-wrap button.admin-btn,
+.admin-layout button.admin-btn,
+.admin-layout a.admin-btn,
+.admin-layout a.admin-btn:visited {
+  background-color: var(--admin-accent) !important;
+  color: #fff !important;
+  border: 0 !important;
+}
+
+.admin-login-wrap button.admin-btn:hover,
+.admin-login-wrap button.admin-btn:focus,
+.admin-layout button.admin-btn:hover,
+.admin-layout button.admin-btn:focus,
+.admin-layout a.admin-btn:hover,
+.admin-layout a.admin-btn:focus {
+  background-color: #e55a15 !important;
+  color: #fff !important;
+}
+
+.admin-login-wrap button.admin-btn-secondary,
+.admin-layout button.admin-btn-secondary,
+.admin-layout a.admin-btn-secondary,
+.admin-layout a.admin-btn-secondary:visited {
+  background-color: #ece3d1 !important;
+  color: var(--admin-primary) !important;
+  border: 0 !important;
+}
+
+.admin-login-wrap button.admin-btn-secondary:hover,
+.admin-login-wrap button.admin-btn-secondary:focus,
+.admin-layout button.admin-btn-secondary:hover,
+.admin-layout button.admin-btn-secondary:focus,
+.admin-layout a.admin-btn-secondary:hover,
+.admin-layout a.admin-btn-secondary:focus {
+  background-color: #e0d4bc !important;
+  color: var(--admin-primary) !important;
+}
+
+.admin-layout button.admin-btn-ghost,
+.admin-layout a.admin-btn-ghost,
+.admin-layout a.admin-btn-ghost:visited {
+  background-color: #fff !important;
+  color: var(--admin-primary) !important;
+  border: 1px solid var(--admin-border) !important;
+}
+
+.admin-layout button.admin-btn-ghost:hover,
+.admin-layout button.admin-btn-ghost:focus,
+.admin-layout a.admin-btn-ghost:hover,
+.admin-layout a.admin-btn-ghost:focus {
+  background-color: #faf7f1 !important;
+  color: var(--admin-primary) !important;
+  border-color: #d8cdb8 !important;
+}
+
+.admin-layout button.admin-btn-success,
+.admin-layout a.admin-btn-success,
+.admin-layout a.admin-btn-success:visited {
+  background-color: #137333 !important;
+  color: #fff !important;
+  border: 0 !important;
+}
+
+.admin-layout button.admin-btn-success:hover,
+.admin-layout button.admin-btn-success:focus,
+.admin-layout a.admin-btn-success:hover,
+.admin-layout a.admin-btn-success:focus {
+  background-color: #0f5c2a !important;
+  color: #fff !important;
+}
+
+.admin-layout button.admin-btn-teal {
+  background-color: var(--admin-primary) !important;
+  color: #fff !important;
+  border: 2px solid var(--admin-primary-dark) !important;
+}
+
+.admin-layout button.admin-btn-teal:hover,
+.admin-layout button.admin-btn-teal:focus {
+  background-color: var(--admin-primary-dark) !important;
+  color: #fff !important;
+  border-color: #001f20 !important;
+}
+
+.admin-layout button.admin-btn-blue,
+.admin-layout a.admin-btn-blue,
+.admin-layout a.admin-btn-blue:visited {
+  background-color: #2563eb !important;
+  color: #fff !important;
+  border: 0 !important;
+}
+
+.admin-layout button.admin-btn-blue:hover,
+.admin-layout button.admin-btn-blue:focus,
+.admin-layout a.admin-btn-blue:hover,
+.admin-layout a.admin-btn-blue:focus {
+  background-color: #1d4ed8 !important;
+  color: #fff !important;
+}
+
+.admin-layout button.admin-btn-black,
+.admin-layout a.admin-btn-black,
+.admin-layout a.admin-btn-black:visited {
+  background-color: #111827 !important;
+  color: #fff !important;
+  border: 0 !important;
+}
+
+.admin-layout button.admin-btn-black:hover,
+.admin-layout button.admin-btn-black:focus,
+.admin-layout a.admin-btn-black:hover,
+.admin-layout a.admin-btn-black:focus {
+  background-color: #000 !important;
+  color: #fff !important;
+}
+
+.admin-layout button.admin-btn-danger,
+.admin-layout a.admin-btn-danger,
+.admin-layout a.admin-btn-danger:visited {
+  background-color: #dc2626 !important;
+  color: #fff !important;
+  border: 0 !important;
+}
+
+.admin-layout button.admin-btn-danger:hover,
+.admin-layout button.admin-btn-danger:focus,
+.admin-layout a.admin-btn-danger:hover,
+.admin-layout a.admin-btn-danger:focus {
+  background-color: #b91c1c !important;
+  color: #fff !important;
+}
+
+.admin-layout button.admin-availability-remove,
+.admin-layout button.admin-availability-remove:hover,
+.admin-layout button.admin-availability-remove:focus {
+  background-color: #fff !important;
+  color: #991b1b !important;
+  border: 1px solid #991b1b !important;
+  text-decoration: none !important;
+  -webkit-appearance: none !important;
+  appearance: none !important;
+}
+
+.admin-layout button.admin-availability-remove:hover,
+.admin-layout button.admin-availability-remove:focus {
+  background-color: #fef2f2 !important;
+  color: #7f1d1d !important;
+  border-color: #7f1d1d !important;
+}
+
+.admin-layout button.admin-order-summary {
+  display: grid !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+  grid-template-columns:
+    32px
+    minmax(0, 1.6fr)
+    minmax(120px, 0.95fr)
+    minmax(80px, 0.55fr)
+    minmax(96px, 0.65fr) !important;
+  gap: 0.85rem 1rem !important;
+  align-items: center !important;
+  background-color: #fff !important;
+  color: inherit !important;
+  border: 0 !important;
+  text-decoration: none !important;
+  -webkit-appearance: none !important;
+  appearance: none !important;
+}
+
+.admin-layout button.admin-order-summary:hover,
+.admin-layout button.admin-order-summary:focus,
+.admin-order-item--open .admin-order-summary {
+  background-color: #fffdf8 !important;
+  color: inherit !important;
+}
+
+.admin-layout .admin-mobile-header button.admin-mobile-menu-btn {
+  background: rgba(255, 255, 255, 0.08) !important;
+  color: inherit !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  -webkit-appearance: none !important;
+  appearance: none !important;
+}
+
+.admin-layout .admin-sidebar button.admin-sidebar__link {
+  background: transparent !important;
+  color: rgba(255, 255, 255, 0.88) !important;
+  border: 0 !important;
+  text-decoration: none !important;
+  -webkit-appearance: none !important;
+  appearance: none !important;
+}
+
+.admin-layout .admin-sidebar button.admin-sidebar__link--logout {
+  color: #ffd5cc !important;
+}
+
 .admin-btn-danger {
-  background: #b42318;
+  background: #dc2626;
+  color: #fff;
 }
 
 .admin-btn-danger:hover {
-  background: #8f1c13;
+  background: #b91c1c;
+  color: #fff;
+}
+
+.admin-btn-blue {
+  background: #2563eb;
+  color: #fff;
+}
+
+.admin-btn-blue:hover {
+  background: #1d4ed8;
+  color: #fff;
+}
+
+.admin-btn-black {
+  background: #111827;
+  color: #fff;
+}
+
+.admin-btn-black:hover {
+  background: #000;
+  color: #fff;
 }
 
 .admin-btn-small {
@@ -546,12 +867,467 @@ body:has(.admin-layout) .joinchat--ronicas {
   margin-bottom: 1rem;
 }
 
+.admin-form-status {
+  min-height: 0;
+}
+
+.admin-status-banner {
+  margin: 0 0 1rem;
+  padding: 0.85rem 1rem;
+  border-radius: 10px;
+  font-weight: 600;
+  border: 1px solid transparent;
+}
+
+.admin-status-banner--loading {
+  color: #8a4b00;
+  background: #fff7e8;
+  border-color: #f5d9a8;
+}
+
+.admin-status-banner--success {
+  color: #137333;
+  background: #edf7ed;
+  border-color: #b7dfb9;
+}
+
+.admin-status-banner--error {
+  color: #b42318;
+  background: #fef3f2;
+  border-color: #fecdca;
+}
+
+.admin-message-list {
+  display: grid;
+  gap: 1rem;
+  margin-top: 1.25rem;
+}
+
+.admin-message-card {
+  border: 1px solid var(--admin-border);
+  border-radius: 14px;
+  padding: 1rem 1.1rem;
+  background: #fff;
+}
+
+.admin-message-card--new {
+  border-color: #f5c4a5;
+  background: #fffaf6;
+}
+
+.admin-message-card__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 0.85rem;
+}
+
+.admin-message-card__header h2 {
+  margin: 0;
+  font-size: 1.05rem;
+  color: var(--admin-teal);
+}
+
+.admin-message-card__meta {
+  display: grid;
+  gap: 0.55rem;
+  margin-bottom: 0.85rem;
+  font-size: 0.95rem;
+}
+
+.admin-message-card__meta strong {
+  display: block;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--admin-muted);
+  margin-bottom: 0.15rem;
+}
+
+.admin-message-card__meta a {
+  color: var(--admin-teal);
+  text-decoration: none;
+}
+
+.admin-message-card__meta a:hover {
+  text-decoration: underline;
+}
+
+.admin-message-card__body {
+  margin-bottom: 0.85rem;
+}
+
+.admin-message-card__body strong {
+  display: block;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--admin-muted);
+  margin-bottom: 0.35rem;
+}
+
+.admin-message-card__body p {
+  margin: 0;
+  white-space: pre-wrap;
+  line-height: 1.55;
+}
+
+.admin-message-card__actions {
+  display: flex;
+  gap: 0.65rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.admin-order-table {
+  margin-top: 0.5rem;
+  border: 1px solid #d8cdb8;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #fff;
+}
+
+.admin-order-table__head,
+.admin-order-summary {
+  display: grid;
+  grid-template-columns:
+    32px
+    minmax(0, 1.6fr)
+    minmax(120px, 0.95fr)
+    minmax(80px, 0.55fr)
+    minmax(96px, 0.65fr);
+  gap: 0.85rem 1rem;
+  align-items: center;
+}
+
+.admin-order-table__head > :nth-child(1) {
+  grid-column: 1;
+}
+
+.admin-order-table__head > :nth-child(2) {
+  grid-column: 2;
+}
+
+.admin-order-table__head > :nth-child(3) {
+  grid-column: 3;
+}
+
+.admin-order-table__head > :nth-child(4) {
+  grid-column: 4;
+  text-align: right;
+}
+
+.admin-order-table__head > :nth-child(5) {
+  grid-column: 5;
+  text-align: right;
+}
+
+.admin-order-table__head {
+  padding: 0.65rem 1rem;
+  border-bottom: 1px solid #d8cdb8;
+  background: #faf7f1;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--admin-muted);
+}
+
+.admin-order-item {
+  border-bottom: 1px solid #d8cdb8;
+}
+
+.admin-order-item:last-child {
+  border-bottom: none;
+}
+
+.admin-order-summary {
+  width: 100%;
+  padding: 0.95rem 1rem;
+  border: 0;
+  background: #fff;
+  font: inherit;
+  font-size: 0.9rem;
+  line-height: 1.45;
+  text-align: left;
+  color: inherit;
+  cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.admin-order-summary:hover,
+.admin-order-item--open .admin-order-summary {
+  background: #fffdf8;
+  box-shadow: inset 3px 0 0 var(--admin-accent);
+}
+
+.admin-order-summary__chevron {
+  grid-column: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--admin-muted);
+  transition: transform 0.2s ease;
+}
+
+.admin-order-item--open .admin-order-summary__chevron {
+  transform: rotate(90deg);
+  color: var(--admin-accent);
+}
+
+.admin-order-summary__product {
+  grid-column: 2;
+  display: grid;
+  gap: 0.15rem;
+  min-width: 0;
+}
+
+.admin-order-summary__product strong {
+  color: var(--admin-primary);
+  font-weight: 600;
+}
+
+.admin-order-summary__meta {
+  font-size: 0.8rem;
+  color: var(--admin-muted);
+}
+
+.admin-order-summary__date {
+  grid-column: 3;
+  min-width: 0;
+}
+
+.admin-order-summary__date time {
+  font-size: 0.86rem;
+  color: var(--admin-primary);
+  white-space: nowrap;
+}
+
+.admin-order-summary__amount {
+  grid-column: 4;
+  justify-self: end;
+  text-align: right;
+  min-width: 0;
+}
+
+.admin-order-summary__amount strong {
+  color: var(--admin-primary);
+  font-weight: 600;
+}
+
+.admin-order-summary__status {
+  grid-column: 5;
+  justify-self: end;
+  min-width: 0;
+}
+
+.admin-order-details {
+  padding: 0 1rem 1rem 1rem;
+  border-top: 1px solid #ebe3d6;
+  background: #fcfaf6;
+  animation: admin-order-details-in 0.18s ease;
+}
+
+@keyframes admin-order-details-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.admin-order-details__grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  padding-top: 1rem;
+}
+
+.admin-order-details__section h3 {
+  margin: 0 0 0.65rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--admin-muted);
+}
+
+.admin-order-details__list {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.35rem 0.85rem;
+  margin: 0;
+}
+
+.admin-order-details__list dt {
+  margin: 0;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--admin-muted);
+}
+
+.admin-order-details__list dd {
+  margin: 0;
+  font-size: 0.88rem;
+  color: var(--admin-primary);
+}
+
+.admin-order-details__list a {
+  color: var(--admin-primary);
+  text-decoration: none;
+}
+
+.admin-order-details__list a:hover {
+  color: var(--admin-accent);
+  text-decoration: underline;
+}
+
+.admin-order-details__list code {
+  font-size: 0.82rem;
+  word-break: break-all;
+}
+
+.admin-order-details__message {
+  margin-top: 0.85rem;
+  padding: 0.75rem 0.85rem;
+  border: 1px solid #ebe3d6;
+  border-radius: 8px;
+  background: #fff;
+}
+
+.admin-order-details__message-label {
+  display: block;
+  margin-bottom: 0.35rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--admin-muted);
+}
+
+.admin-order-details__message p {
+  margin: 0;
+  font-size: 0.88rem;
+  line-height: 1.5;
+  white-space: pre-wrap;
+}
+
+.admin-order-details__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #ebe3d6;
+}
+
+.admin-order-details__status {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+}
+
+.admin-order-row__type-hint {
+  display: block;
+  font-size: 0.78rem;
+  color: var(--admin-muted);
+}
+
+.admin-order-status-form {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.5rem;
+  flex-wrap: nowrap;
+  width: auto;
+  max-width: 100%;
+}
+
+.admin-order-status-form__label {
+  display: grid;
+  gap: 0.3rem;
+  min-width: 0;
+}
+
+.admin-order-status-form__label > span {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--admin-muted);
+}
+
+.admin-order-status-form select {
+  flex: 1 1 auto;
+  min-width: 0;
+  width: auto;
+  min-height: 38px;
+  padding: 0.5rem 2.1rem 0.5rem 0.7rem;
+  border: 1px solid #d8cdb8;
+  border-radius: 8px;
+  font: inherit;
+  font-size: 0.86rem;
+  font-weight: 500;
+  color: var(--admin-primary);
+  background: #fff;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23003839' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.65rem center;
+  background-size: 0.95rem;
+  cursor: pointer;
+}
+
+.admin-order-status-form select:focus {
+  outline: none;
+  border-color: var(--admin-accent);
+  box-shadow: 0 0 0 3px rgba(255, 103, 30, 0.12);
+}
+
+.admin-layout .admin-order-status-form button.admin-btn {
+  flex: 0 0 auto;
+  flex-shrink: 0;
+  border: 0;
+  appearance: none;
+  -webkit-appearance: none;
+  white-space: nowrap;
+}
+
+.admin-layout .admin-order-status-form button.admin-btn-success,
+.admin-layout .admin-order-status-form button.admin-btn-success:hover,
+.admin-layout .admin-order-status-form button.admin-btn-success:focus {
+  background-color: #137333 !important;
+  color: #fff !important;
+}
+
+.admin-layout .admin-order-status-form button.admin-btn-success:hover,
+.admin-layout .admin-order-status-form button.admin-btn-success:focus {
+  background-color: #0f5c2a !important;
+}
+
+.admin-btn:disabled {
+  opacity: 0.7;
+  cursor: wait;
+}
+
 .admin-login-wrap {
   min-height: 100vh;
   display: grid;
   place-items: center;
   background:
-    radial-gradient(circle at top right, rgba(255, 103, 30, 0.12), transparent 28%),
+    radial-gradient(
+      circle at top right,
+      rgba(255, 103, 30, 0.12),
+      transparent 28%
+    ),
     linear-gradient(180deg, #f8f4ea 0%, #efe6d2 100%);
   padding: 1rem;
 }
@@ -661,7 +1437,9 @@ body:has(.admin-layout) .joinchat--ronicas {
   font-weight: 500;
   color: var(--admin-primary);
   background: #fff;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
 }
 
 .admin-filter-field select {
@@ -715,7 +1493,9 @@ body:has(.admin-layout) .joinchat--ronicas {
   border: 1px solid var(--admin-border);
   border-top: 0;
   background: #fff;
-  transition: background-color 0.15s ease, box-shadow 0.15s ease;
+  transition:
+    background-color 0.15s ease,
+    box-shadow 0.15s ease;
 }
 
 .admin-product-row:last-child {
@@ -824,7 +1604,9 @@ body:has(.admin-layout) .joinchat--ronicas {
   border: 1px solid var(--admin-border);
   border-top: 0;
   background: #fff;
-  transition: background-color 0.15s ease, box-shadow 0.15s ease;
+  transition:
+    background-color 0.15s ease,
+    box-shadow 0.15s ease;
 }
 
 .admin-page-row:last-child {
@@ -895,27 +1677,6 @@ body:has(.admin-layout) .joinchat--ronicas {
   gap: 0.5rem;
 }
 
-.admin-layout a.admin-btn,
-.admin-layout a.admin-btn:hover,
-.admin-layout a.admin-btn:focus,
-.admin-layout a.admin-btn:visited {
-  text-decoration: none;
-}
-
-.admin-layout a.admin-btn-secondary,
-.admin-layout a.admin-btn-secondary:hover,
-.admin-layout a.admin-btn-secondary:focus,
-.admin-layout a.admin-btn-secondary:visited {
-  color: var(--admin-primary);
-}
-
-.admin-layout a.admin-btn-ghost,
-.admin-layout a.admin-btn-ghost:hover,
-.admin-layout a.admin-btn-ghost:focus,
-.admin-layout a.admin-btn-ghost:visited {
-  color: var(--admin-primary);
-}
-
 .admin-product-actions {
   display: flex;
   align-items: center;
@@ -940,11 +1701,234 @@ body:has(.admin-layout) .joinchat--ronicas {
 .admin-checkbox {
   display: flex !important;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.85rem;
+  padding: 0.9rem 1rem;
+  margin-top: 0.15rem;
+  border: 1px solid var(--admin-input-border);
+  border-radius: 10px;
+  background: linear-gradient(180deg, #fff 0%, #fffdf8 100%);
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--admin-primary);
+  transition:
+    border-color 0.15s ease,
+    background-color 0.15s ease,
+    box-shadow 0.15s ease;
 }
 
-.admin-checkbox input {
-  width: auto;
+.admin-checkbox:hover {
+  border-color: var(--admin-input-border-focus);
+  background: #fff;
+}
+
+.admin-checkbox input[type="checkbox"] {
+  width: 1.5rem;
+  height: 1.5rem;
+  margin: 0;
+  flex-shrink: 0;
+  border: 2px solid #d8cdb8;
+  border-radius: 6px;
+  background: #fff;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.admin-checkbox input[type="checkbox"]:checked {
+  border-color: var(--admin-primary);
+  background-color: var(--admin-primary);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 0.95rem;
+}
+
+.admin-checkbox input[type="checkbox"]:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(255, 103, 30, 0.12);
+}
+
+.admin-checkbox input[type="checkbox"]:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(255, 103, 30, 0.18);
+}
+
+.admin-layout .admin-checkbox input[type="checkbox"] {
+  width: 1.5rem !important;
+  height: 1.5rem !important;
+  min-width: 1.5rem;
+  padding: 0 !important;
+  border: 2px solid #d8cdb8 !important;
+  border-radius: 6px !important;
+  background-color: #fff !important;
+  box-shadow: none;
+  appearance: none !important;
+  -webkit-appearance: none !important;
+}
+
+.admin-layout .admin-checkbox input[type="checkbox"]:checked {
+  border-color: var(--admin-primary) !important;
+  background-color: var(--admin-primary) !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E") !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+  background-size: 0.95rem !important;
+}
+
+.admin-availability-field {
+  display: grid;
+  gap: 0.85rem;
+  margin: 0;
+  padding: 1.1rem 1.15rem;
+  border: 1px solid #e3d9c8;
+  border-left: 4px solid var(--admin-primary);
+  border-radius: 12px;
+  background: linear-gradient(180deg, #fff 0%, #fffdf8 100%);
+}
+
+.admin-availability-field legend {
+  padding: 0 0.35rem;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--admin-primary);
+}
+
+.admin-availability-field > .admin-muted {
+  margin: 0;
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+
+.admin-availability-add {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  align-items: stretch;
+}
+
+.admin-availability-add input[type="date"] {
+  flex: 1 1 220px;
+  min-width: 0;
+  min-height: 44px;
+  padding: 0.6rem 0.85rem;
+  border: 1px solid #d8cdb8;
+  border-radius: 10px;
+  font: inherit;
+  font-size: 0.92rem;
+  color: var(--admin-primary);
+  background: #fff;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.admin-availability-add input[type="date"]:focus {
+  outline: none;
+  border-color: var(--admin-accent);
+  box-shadow: 0 0 0 3px rgba(255, 103, 30, 0.12);
+}
+
+.admin-availability-add .admin-btn {
+  flex: 0 0 auto;
+  align-self: stretch;
+  min-height: 44px;
+  padding-inline: 1.1rem;
+  font-weight: 600;
+  border-radius: 10px;
+}
+
+.admin-layout .admin-availability-add button.admin-btn {
+  background-color: #dc2626 !important;
+  color: #fff !important;
+  border: 2px solid #991b1b !important;
+  box-shadow: none;
+  text-decoration: none !important;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.admin-layout .admin-availability-add button.admin-btn:hover,
+.admin-layout .admin-availability-add button.admin-btn:focus {
+  background-color: #b91c1c !important;
+  border-color: #7f1d1d !important;
+  color: #fff !important;
+}
+
+.admin-availability-hint {
+  margin: 0;
+  font-size: 0.86rem;
+}
+
+.admin-availability-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.admin-availability-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  width: fit-content;
+  max-width: 100%;
+  padding: 0.55rem 0.65rem;
+  border: 1px solid #f87171;
+  border-radius: 10px;
+  background: #fecaca;
+  box-shadow: 0 1px 2px rgba(185, 28, 28, 0.12);
+}
+
+.admin-availability-chip__date {
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: #7f1d1d;
+}
+
+.admin-availability-remove {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  min-height: 32px;
+  padding: 0.35rem 0.7rem;
+  border: 1px solid #991b1b !important;
+  border-radius: 8px;
+  background: #fff !important;
+  color: #991b1b !important;
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.admin-availability-remove:hover,
+.admin-availability-remove:focus {
+  background: #fef2f2 !important;
+  border-color: #7f1d1d !important;
+  color: #7f1d1d !important;
+  text-decoration: none !important;
+}
+
+.admin-availability-empty {
+  margin: 0;
+  padding: 0.85rem 0.9rem;
+  border: 1px dashed #d8cdb8;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.7);
+  font-size: 0.88rem;
+  text-align: center;
 }
 
 .admin-html-editor {
@@ -958,7 +1942,7 @@ body:has(.admin-layout) .joinchat--ronicas {
   display: grid;
   gap: 0.75rem;
   padding: 1rem;
-  border: 1px solid var(--admin-border);
+  border: 1px solid var(--admin-input-border);
   border-radius: 12px;
   background: #fffdf8;
 }
@@ -1107,6 +2091,100 @@ body:has(.admin-layout) .joinchat--ronicas {
     justify-content: flex-start;
     padding-top: 0.35rem;
     border-top: 1px solid var(--admin-border);
+  }
+
+  .admin-order-table {
+    border: none;
+    border-radius: 0;
+    background: transparent;
+    overflow: visible;
+  }
+
+  .admin-order-table__head {
+    display: none;
+  }
+
+  .admin-order-item {
+    border: 1px solid #d8cdb8;
+    border-radius: 12px;
+    margin-bottom: 0.65rem;
+    overflow: hidden;
+    background: #fff;
+  }
+
+  .admin-order-item:last-child {
+    margin-bottom: 0;
+  }
+
+  .admin-order-summary {
+    grid-template-columns: 28px 1fr auto !important;
+    grid-template-areas:
+      "chevron product status"
+      "chevron meta amount";
+    gap: 0.35rem 0.75rem;
+    align-items: start;
+  }
+
+  .admin-layout button.admin-order-summary {
+    grid-template-columns: 28px 1fr auto !important;
+  }
+
+  .admin-order-summary__chevron {
+    grid-column: auto;
+    grid-area: chevron;
+    margin-top: 0.15rem;
+  }
+
+  .admin-order-summary__product {
+    grid-column: auto;
+    grid-area: product;
+  }
+
+  .admin-order-summary__meta {
+    grid-area: meta;
+  }
+
+  .admin-order-summary__date {
+    display: none;
+  }
+
+  .admin-order-summary__amount {
+    grid-column: auto;
+    grid-area: amount;
+    justify-self: end;
+  }
+
+  .admin-order-summary__status {
+    grid-column: auto;
+    grid-area: status;
+    justify-self: end;
+  }
+
+  .admin-order-details__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-order-details__footer {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .admin-order-status-form {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
+  .admin-order-status-form__label {
+    flex: 1 1 100%;
+  }
+
+  .admin-order-status-form select {
+    width: 100%;
+  }
+
+  .admin-order-status-form .admin-btn {
+    width: 100%;
+    justify-content: center;
   }
 }
 

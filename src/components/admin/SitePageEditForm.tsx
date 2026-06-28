@@ -53,22 +53,12 @@ export default function SitePageEditForm({ page }: SitePageEditFormProps) {
         />
       </label>
 
-      <label>
-        Full page content (HTML)
-        <textarea
-          name="body_html"
-          className="admin-html-editor"
-          defaultValue={page.body_html}
-          required
-        />
-      </label>
       <p className="admin-muted">
-        Edit the full Book Taxi or Book Tour page. Hero heading and description
-        above are applied on top of this content. Product card titles are synced
-        from Travels / Taxi when the page loads.
+        Hero heading and description are shown at the top of the page. Product
+        cards are synced automatically from Travels / Taxi when the page loads.
       </p>
 
-      <button type="submit" className="admin-btn">
+      <button type="submit" className="admin-btn admin-btn-success">
         Save page
       </button>
     </form>

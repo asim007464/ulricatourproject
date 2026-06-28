@@ -109,3 +109,38 @@ export async function sendBookingRequestNotification(details: {
     ].join("\n"),
   });
 }
+
+export async function sendContactMessageNotification(details: {
+  firstName: string;
+  lastName?: string;
+  email: string;
+  phone?: string;
+  subject?: string;
+  message?: string;
+}) {
+  const { user, notificationEmail } = getSmtpConfig();
+  const transport = createTransport();
+  const fullName = [details.firstName, details.lastName]
+    .filter(Boolean)
+    .join(" ");
+
+  const lines = [
+    "New contact form message received.",
+    "",
+    `Name: ${fullName}`,
+    `Email: ${details.email}`,
+    details.phone ? `Phone: ${details.phone}` : null,
+    details.subject ? `Subject: ${details.subject}` : null,
+    "",
+    details.message ? `Message:\n${details.message}` : "Message: (none)",
+  ].filter(Boolean);
+
+  await transport.sendMail({
+    from: `"Ronica's Splendid Tours" <${user}>`,
+    to: notificationEmail,
+    subject: details.subject
+      ? `Contact form: ${details.subject}`
+      : `Contact form message from ${fullName}`,
+    text: lines.join("\n"),
+  });
+}

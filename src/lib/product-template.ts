@@ -1,7 +1,7 @@
 import fs from "fs";
 import path from "path";
 import type { ProductPricing } from "@/lib/products";
-import { syncProductImageInHtml } from "@/lib/product-image";
+import { syncProductCoverImageInHtml, syncProductDetailImageInHtml } from "@/lib/product-image";
 
 const TEMPLATE_SLUGS = {
   taxi: "one-way-transfer-mbj-airport-to-montego-bay-hotels",
@@ -96,7 +96,8 @@ export function buildProductHtml(options: {
   wordpressId: string;
   pricing: ProductPricing;
   description?: string;
-  imageUrl?: string;
+  coverImageUrl?: string;
+  detailImageUrl?: string;
 }) {
   const templateSlug = TEMPLATE_SLUGS[options.category];
   const templatePath = path.join(
@@ -141,8 +142,15 @@ export function buildProductHtml(options: {
     );
   }
 
-  if (options.imageUrl) {
-    html = syncProductImageInHtml(html, options.imageUrl);
+  const detailImageUrl =
+    options.detailImageUrl || options.coverImageUrl || undefined;
+
+  if (options.coverImageUrl) {
+    html = syncProductCoverImageInHtml(html, options.coverImageUrl);
+  }
+
+  if (detailImageUrl) {
+    html = syncProductDetailImageInHtml(html, detailImageUrl);
   }
 
   return html;
