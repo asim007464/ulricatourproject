@@ -46,11 +46,11 @@ export default function AdminOrderList({ orders }: AdminOrderListProps) {
   return (
     <div className="admin-order-table">
       <div className="admin-order-table__head">
-        <span aria-hidden="true" />
         <span>Order</span>
         <span>Date</span>
         <span>Amount</span>
         <span>Status</span>
+        <span aria-hidden="true" />
       </div>
 
       {orders.map((order) => {
@@ -73,29 +73,8 @@ export default function AdminOrderList({ orders }: AdminOrderListProps) {
               aria-expanded={isOpen}
               onClick={() => setOpenId(isOpen ? null : order.id)}
             >
-              <span className="admin-order-summary__chevron" aria-hidden="true">
-                <svg viewBox="0 0 24 24" width="18" height="18">
-                  <path
-                    d="M9 6l6 6-6 6"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              </span>
               <span className="admin-order-summary__product">
                 <strong title={order.product_title}>{order.product_title}</strong>
-                <span className="admin-order-summary__meta">
-                  <span>
-                    {order.guests} guest{order.guests === 1 ? "" : "s"}
-                  </span>
-                  <span className="admin-order-summary__meta-sep" aria-hidden="true">
-                    ·
-                  </span>
-                  <span>Pick-up {order.pickup_date}</span>
-                </span>
               </span>
               <span className="admin-order-summary__date">
                 <span className="admin-order-summary__col-label">Date</span>
@@ -112,6 +91,18 @@ export default function AdminOrderList({ orders }: AdminOrderListProps) {
                 <span className={orderStatusBadgeClass(order.status)}>
                   {formatLabel(order.status)}
                 </span>
+              </span>
+              <span className="admin-order-summary__chevron" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="18" height="18">
+                  <path
+                    d="M9 6l6 6-6 6"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
               </span>
             </button>
 
