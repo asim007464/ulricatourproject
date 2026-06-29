@@ -30,16 +30,21 @@ export default async function AdminOrdersPage() {
     <div className="admin-card">
       <AdminPageTitle icon={<OrdersIcon />}>Orders</AdminPageTitle>
 
-      <div className="admin-page-header">
-        <p className="admin-muted admin-page-intro">
-          All booking requests and paid PayPal orders appear here. Click a row to
-          view full details.
-        </p>
-        {orderCount > 0 ? (
-          <span className="admin-toolbar__count">
-            {orderCount} order{orderCount === 1 ? "" : "s"}
-          </span>
-        ) : null}
+      <div className="admin-toolbar admin-toolbar--orders">
+        <div className="admin-toolbar__top">
+          <div>
+            <p className="admin-toolbar__title">Booking overview</p>
+            <p className="admin-toolbar__hint admin-muted">
+              All booking requests and paid PayPal orders. Click a row to expand
+              full customer and trip details.
+            </p>
+          </div>
+          {orderCount > 0 ? (
+            <span className="admin-toolbar__count">
+              {orderCount} order{orderCount === 1 ? "" : "s"}
+            </span>
+          ) : null}
+        </div>
       </div>
 
       {error ? (

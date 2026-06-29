@@ -86,21 +86,29 @@ export default function AdminOrderList({ orders }: AdminOrderListProps) {
                 </svg>
               </span>
               <span className="admin-order-summary__product">
-                <strong>{order.product_title}</strong>
+                <strong title={order.product_title}>{order.product_title}</strong>
                 <span className="admin-order-summary__meta">
-                  {order.guests} guest{order.guests === 1 ? "" : "s"} · Pick-up{" "}
-                  {order.pickup_date}
+                  <span>
+                    {order.guests} guest{order.guests === 1 ? "" : "s"}
+                  </span>
+                  <span className="admin-order-summary__meta-sep" aria-hidden="true">
+                    ·
+                  </span>
+                  <span>Pick-up {order.pickup_date}</span>
                 </span>
               </span>
               <span className="admin-order-summary__date">
+                <span className="admin-order-summary__col-label">Date</span>
                 <time dateTime={order.created_at}>
                   {formatOrderDate(order.created_at)}
                 </time>
               </span>
               <span className="admin-order-summary__amount">
+                <span className="admin-order-summary__col-label">Amount</span>
                 <strong>{formatAmount(order.amount, order.currency)}</strong>
               </span>
               <span className="admin-order-summary__status">
+                <span className="admin-order-summary__col-label">Status</span>
                 <span className={orderStatusBadgeClass(order.status)}>
                   {formatLabel(order.status)}
                 </span>

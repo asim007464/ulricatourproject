@@ -387,25 +387,31 @@ body:has(.admin-layout) .joinchat--ronicas {
 
 .admin-badge {
   display: inline-block;
-  padding: 0.22rem 0.6rem;
+  padding: 0.28rem 0.7rem;
   border-radius: 999px;
-  font-size: 0.75rem;
-  font-weight: 600;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: capitalize;
+  white-space: nowrap;
 }
 
 .admin-badge-paid {
-  background: #dff5e5;
-  color: #137333;
+  background: #e6f4ea;
+  color: #0d652d;
+  border: 1px solid #b7dfb9;
 }
 
 .admin-badge-request {
-  background: #fff2cc;
+  background: #fff8e1;
   color: #8a6d00;
+  border: 1px solid #f5d9a8;
 }
 
 .admin-badge-pending {
-  background: #e8eef8;
+  background: #eef2f8;
   color: #2f5aa8;
+  border: 1px solid #c5d4ea;
 }
 
 .admin-badge-taxi {
@@ -734,13 +740,8 @@ body:has(.admin-layout) .joinchat--ronicas {
   width: 100% !important;
   max-width: 100% !important;
   box-sizing: border-box !important;
-  grid-template-columns:
-    32px
-    minmax(0, 1.6fr)
-    minmax(120px, 0.95fr)
-    minmax(80px, 0.55fr)
-    minmax(96px, 0.65fr) !important;
-  gap: 0.85rem 1rem !important;
+  grid-template-columns: var(--admin-order-cols) !important;
+  gap: 0 1.25rem !important;
   align-items: center !important;
   background-color: #fff !important;
   color: inherit !important;
@@ -981,23 +982,20 @@ body:has(.admin-layout) .joinchat--ronicas {
 }
 
 .admin-order-table {
-  margin-top: 0.5rem;
-  border: 1px solid #d8cdb8;
-  border-radius: 12px;
+  --admin-order-cols: 28px minmax(0, 1fr) 158px 92px 104px;
+  margin-top: 0;
+  border: 1px solid var(--admin-border);
+  border-radius: 14px;
   overflow: hidden;
   background: #fff;
+  box-shadow: 0 1px 3px rgba(0, 56, 57, 0.04);
 }
 
 .admin-order-table__head,
 .admin-order-summary {
   display: grid;
-  grid-template-columns:
-    32px
-    minmax(0, 1.6fr)
-    minmax(120px, 0.95fr)
-    minmax(80px, 0.55fr)
-    minmax(96px, 0.65fr);
-  gap: 0.85rem 1rem;
+  grid-template-columns: var(--admin-order-cols);
+  gap: 0 1.25rem;
   align-items: center;
 }
 
@@ -1020,22 +1018,22 @@ body:has(.admin-layout) .joinchat--ronicas {
 
 .admin-order-table__head > :nth-child(5) {
   grid-column: 5;
-  text-align: right;
+  text-align: center;
 }
 
 .admin-order-table__head {
-  padding: 0.65rem 1rem;
-  border-bottom: 1px solid #d8cdb8;
-  background: #faf7f1;
-  font-size: 0.72rem;
+  padding: 0.75rem 1.25rem;
+  border-bottom: 1px solid var(--admin-border);
+  background: linear-gradient(180deg, #faf7f1 0%, #f3ede2 100%);
+  font-size: 0.7rem;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.06em;
   color: var(--admin-muted);
 }
 
 .admin-order-item {
-  border-bottom: 1px solid #d8cdb8;
+  border-bottom: 1px solid #ebe3d6;
 }
 
 .admin-order-item:last-child {
@@ -1044,12 +1042,12 @@ body:has(.admin-layout) .joinchat--ronicas {
 
 .admin-order-summary {
   width: 100%;
-  padding: 0.95rem 1rem;
+  padding: 1rem 1.25rem;
   border: 0;
   background: #fff;
   font: inherit;
   font-size: 0.9rem;
-  line-height: 1.45;
+  line-height: 1.4;
   text-align: left;
   color: inherit;
   cursor: pointer;
@@ -1069,41 +1067,72 @@ body:has(.admin-layout) .joinchat--ronicas {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 6px;
+  background: #f5f0e6;
   color: var(--admin-muted);
-  transition: transform 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    background-color 0.15s ease,
+    color 0.15s ease;
 }
 
 .admin-order-item--open .admin-order-summary__chevron {
   transform: rotate(90deg);
+  background: rgba(255, 103, 30, 0.12);
   color: var(--admin-accent);
 }
 
 .admin-order-summary__product {
   grid-column: 2;
   display: grid;
-  gap: 0.15rem;
+  gap: 0.2rem;
   min-width: 0;
+  overflow: hidden;
 }
 
 .admin-order-summary__product strong {
+  display: block;
   color: var(--admin-primary);
   font-weight: 600;
+  font-size: 0.92rem;
+  line-height: 1.35;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .admin-order-summary__meta {
-  font-size: 0.8rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.78rem;
   color: var(--admin-muted);
+  min-width: 0;
+}
+
+.admin-order-summary__meta-sep {
+  opacity: 0.55;
+}
+
+.admin-order-summary__col-label {
+  display: none;
 }
 
 .admin-order-summary__date {
   grid-column: 3;
   min-width: 0;
+  overflow: hidden;
 }
 
 .admin-order-summary__date time {
-  font-size: 0.86rem;
-  color: var(--admin-primary);
-  white-space: nowrap;
+  display: block;
+  font-size: 0.84rem;
+  font-weight: 500;
+  color: #3d4f56;
+  line-height: 1.35;
 }
 
 .admin-order-summary__amount {
@@ -1114,20 +1143,37 @@ body:has(.admin-layout) .joinchat--ronicas {
 }
 
 .admin-order-summary__amount strong {
+  display: block;
   color: var(--admin-primary);
-  font-weight: 600;
+  font-weight: 700;
+  font-size: 0.92rem;
+  font-variant-numeric: tabular-nums;
 }
 
 .admin-order-summary__status {
   grid-column: 5;
-  justify-self: end;
+  justify-self: center;
   min-width: 0;
 }
 
+.admin-order-summary__status .admin-badge {
+  min-width: 4.75rem;
+  text-align: center;
+}
+
+.admin-toolbar--orders {
+  margin-top: 0.25rem;
+  margin-bottom: 1.25rem;
+}
+
+.admin-toolbar--orders .admin-toolbar__top {
+  margin-bottom: 0;
+}
+
 .admin-order-details {
-  padding: 0 1rem 1rem 1rem;
+  padding: 0 1.25rem 1.25rem;
   border-top: 1px solid #ebe3d6;
-  background: #fcfaf6;
+  background: linear-gradient(180deg, #fcfaf6 0%, #f8f4ec 100%);
   animation: admin-order-details-in 0.18s ease;
 }
 
@@ -2010,6 +2056,16 @@ body:has(.admin-layout) .joinchat--ronicas {
   width: 100%;
 }
 
+@media (max-width: 1100px) and (min-width: 961px) {
+  .admin-order-table {
+    --admin-order-cols: 28px minmax(0, 1fr) 138px 84px 96px;
+  }
+
+  .admin-order-summary__date time {
+    font-size: 0.8rem;
+  }
+}
+
 @media (max-width: 960px) {
   .admin-sidebar {
     transform: translateX(-100%);
@@ -2120,9 +2176,11 @@ body:has(.admin-layout) .joinchat--ronicas {
     grid-template-columns: 28px 1fr auto !important;
     grid-template-areas:
       "chevron product status"
-      "chevron meta amount";
-    gap: 0.35rem 0.75rem;
+      "chevron meta amount"
+      "chevron date date";
+    gap: 0.4rem 0.75rem !important;
     align-items: start;
+    padding: 1rem 1.1rem;
   }
 
   .admin-layout button.admin-order-summary {
@@ -2132,7 +2190,7 @@ body:has(.admin-layout) .joinchat--ronicas {
   .admin-order-summary__chevron {
     grid-column: auto;
     grid-area: chevron;
-    margin-top: 0.15rem;
+    margin-top: 0.1rem;
   }
 
   .admin-order-summary__product {
@@ -2145,19 +2203,44 @@ body:has(.admin-layout) .joinchat--ronicas {
   }
 
   .admin-order-summary__date {
-    display: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    grid-column: auto;
+    grid-area: date;
+  }
+
+  .admin-order-summary__date time {
+    font-size: 0.8rem;
+  }
+
+  .admin-order-summary__col-label {
+    display: block;
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--admin-muted);
   }
 
   .admin-order-summary__amount {
     grid-column: auto;
     grid-area: amount;
     justify-self: end;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.15rem;
   }
 
   .admin-order-summary__status {
     grid-column: auto;
     grid-area: status;
     justify-self: end;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.15rem;
   }
 
   .admin-order-details__grid {
