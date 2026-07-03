@@ -2,6 +2,7 @@ import fs from "fs";
 import path from "path";
 import type { ProductPricing } from "@/lib/products";
 import { getFormTripTypeAttr } from "@/lib/products";
+import { resolveProductDetailImageUrl } from "@/lib/product-detail-images";
 import { syncProductCoverImageInHtml, syncProductDetailImageInHtml } from "@/lib/product-image";
 
 const TEMPLATE_SLUGS = {
@@ -144,7 +145,10 @@ export function buildProductHtml(options: {
   }
 
   const detailImageUrl =
-    options.detailImageUrl || options.coverImageUrl || undefined;
+    options.detailImageUrl ||
+    resolveProductDetailImageUrl(options.slug, null) ||
+    options.coverImageUrl ||
+    undefined;
 
   if (options.coverImageUrl) {
     html = syncProductCoverImageInHtml(html, options.coverImageUrl);

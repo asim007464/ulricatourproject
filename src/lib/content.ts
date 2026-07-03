@@ -4,6 +4,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import type { DbProduct, DbSitePage } from "@/lib/supabase/types";
 import type { ProductPricing } from "@/lib/products";
 import { getFormTripTypeAttr } from "@/lib/products";
+import { resolveProductDetailImageUrl } from "@/lib/product-detail-images";
 import { buildListingCardHtml } from "@/lib/product-template";
 import {
   extractProductCoverImageUrl,
@@ -325,7 +326,7 @@ export async function getProductBodyHtml(
   }
 
   const detailImageUrl =
-    product?.detail_image_url ||
+    resolveProductDetailImageUrl(slug, product?.detail_image_url) ||
     extractProductDetailImageUrl(sourceHtml) ||
     coverImageUrl;
 

@@ -5,6 +5,7 @@ import { useEffect, useRef, useState, useTransition } from "react";
 import { deleteProductAction, updateProductAction } from "@/app/admin/actions";
 import ProductImageField from "@/components/admin/ProductImageField";
 import ProductAvailabilityField from "@/components/admin/ProductAvailabilityField";
+import { resolveProductDetailImageUrl } from "@/lib/product-detail-images";
 import type { DbProduct } from "@/lib/supabase/types";
 
 type ProductEditFormProps = {
@@ -18,6 +19,10 @@ export default function ProductEditForm({ product }: ProductEditFormProps) {
   const [error, setError] = useState("");
   const [deleting, setDeleting] = useState(false);
   const [isPending, startTransition] = useTransition();
+  const defaultDetailImage = resolveProductDetailImageUrl(
+    product.slug,
+    product.detail_image_url
+  );
 
   useEffect(() => {
     if (!message && !error) {
@@ -81,8 +86,8 @@ export default function ProductEditForm({ product }: ProductEditFormProps) {
         slug={product.slug}
         name="detail_image_url"
         label="Detail page image"
-        helpText="Shown on the product page when a customer clicks Book Now. Upload a file or paste an image URL."
-        initialUrl={product.detail_image_url}
+        helpText="Shown on the product detail page above the booking calendar. Leave empty to use the default image from /public/detailsimgs, or upload your own."
+        initialUrl={product.detail_image_url ?? defaultDetailImage}
       />
 
       <label>

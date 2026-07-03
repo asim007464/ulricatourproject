@@ -5,6 +5,7 @@ import { useState } from "react";
 import { createProductAction } from "@/app/admin/actions";
 import ProductImageField from "@/components/admin/ProductImageField";
 import ProductAvailabilityField from "@/components/admin/ProductAvailabilityField";
+import { getDefaultDetailImageUrl } from "@/lib/product-detail-images";
 
 export default function ProductCreateForm() {
   const router = useRouter();
@@ -90,10 +91,12 @@ export default function ProductCreateForm() {
       />
 
       <ProductImageField
+        key={`detail-${slug}`}
         slug={slug || "new-product"}
         name="detail_image_url"
         label="Detail page image"
-        helpText="Shown on the product page when a customer clicks Book Now. Upload a file or paste an image URL."
+        helpText="Shown on the product detail page above the booking calendar. A matching image from /public/detailsimgs is used automatically when available."
+        initialUrl={getDefaultDetailImageUrl(slug) ?? undefined}
       />
 
       <label>

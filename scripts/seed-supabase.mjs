@@ -173,6 +173,13 @@ async function seedCategory(manifestPath, category, listingImages) {
     const detailImageUrl =
       extractProductDetailImageUrl(html) || coverImageUrl;
 
+    const defaultDetailImage = JSON.parse(
+      fs.readFileSync(
+        path.join(root, "src/data/product-detail-images.json"),
+        "utf8"
+      )
+    )[product.slug];
+
     const row = {
       slug: product.slug,
       wordpress_id: parsed.wordpress_id,
@@ -192,7 +199,7 @@ async function seedCategory(manifestPath, category, listingImages) {
       description,
       body_html: html,
       image_url: listingImage || coverImageUrl,
-      detail_image_url: detailImageUrl,
+      detail_image_url: defaultDetailImage || detailImageUrl,
       locations: parsed.locations,
       active: true,
     };

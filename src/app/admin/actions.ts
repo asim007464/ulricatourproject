@@ -15,6 +15,7 @@ import {
   slugifyTitle,
 } from "@/lib/product-template";
 import { inferTripTypeFromSlug, type TripType } from "@/lib/products";
+import { resolveProductDetailImageUrl } from "@/lib/product-detail-images";
 import { parseBlockedDatesInput } from "@/lib/product-availability";
 import type { DbProduct } from "@/lib/supabase/types";
 
@@ -130,7 +131,8 @@ export async function updateProductAction(formData: FormData) {
       )
     : null;
 
-  const resolvedDetailImage = detailImageUrl || imageUrl;
+  const resolvedDetailImage =
+    resolveProductDetailImageUrl(slug, detailImageUrl || null) || imageUrl;
   if (syncedBodyHtml && imageUrl) {
     syncedBodyHtml = syncProductCoverImageInHtml(syncedBodyHtml, imageUrl);
   }
@@ -305,7 +307,10 @@ export async function createProductAction(formData: FormData) {
     pricing,
     description,
     coverImageUrl: imageUrl || undefined,
-    detailImageUrl: detailImageUrl || imageUrl || undefined,
+    detailImageUrl:
+      resolveProductDetailImageUrl(slug, detailImageUrl || null) ||
+      imageUrl ||
+      undefined,
   });
 
   const { error } = await supabase.from("products").insert({
