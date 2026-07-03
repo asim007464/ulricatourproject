@@ -1,6 +1,7 @@
 import nodemailer from "nodemailer";
 import { getSmtpConfig } from "@/lib/env";
 import type { BookingDetails } from "@/lib/paypal";
+import { formatDisplayTime } from "@/lib/booking-time";
 
 function createTransport() {
   const { user, password } = getSmtpConfig();
@@ -16,8 +17,12 @@ function createTransport() {
 function bookingSummaryLines(booking: BookingDetails) {
   return [
     `Product: ${booking.productTitle}`,
-    `Pick-up: ${booking.pickupDate}`,
-    `Drop-off: ${booking.dropoffDate}`,
+    `Pick-up: ${booking.pickupDate}${
+      booking.pickupTime ? ` at ${formatDisplayTime(booking.pickupTime)}` : ""
+    }`,
+    `Drop-off: ${booking.dropoffDate}${
+      booking.dropoffTime ? ` at ${formatDisplayTime(booking.dropoffTime)}` : ""
+    }`,
     `Passengers: ${booking.guests}`,
     booking.departureLocation
       ? `Departure: ${booking.departureLocation}`
@@ -52,10 +57,38 @@ export async function sendPurchaseNotification(
   });
 }
 
+export async function sendCustomerPurchaseConfirmation(
+  booking: BookingDetails,
+  customer: { name?: string; email: string }
+) {
+  const { user } = getSmtpConfig();
+  const transport = createTransport();
+  const greeting = customer.name ? `Hi ${customer.name},` : "Hi,";
+
+  await transport.sendMail({
+    from: `"Ronica's Splendid Tours" <${user}>`,
+    to: customer.email,
+    subject: `Booking confirmed: ${booking.productTitle}`,
+    text: [
+      greeting,
+      "",
+      "Thank you for your payment. Your booking is confirmed.",
+      "",
+      ...bookingSummaryLines(booking),
+      "",
+      "Our team will contact you before your trip with any final details.",
+      "",
+      "Ronica's Splendid Tours",
+    ].join("\n"),
+  });
+}
+
 export async function sendBookingRequestNotification(details: {
   productTitle: string;
   pickupDate: string;
   dropoffDate: string;
+  pickupTime?: string;
+  dropoffTime?: string;
   guests: number;
   departureLocation?: string;
   customerName: string;
@@ -71,8 +104,12 @@ export async function sendBookingRequestNotification(details: {
     "New booking request submitted.",
     "",
     `Product: ${details.productTitle}`,
-    `Pick-up: ${details.pickupDate}`,
-    `Drop-off: ${details.dropoffDate}`,
+    `Pick-up: ${details.pickupDate}${
+      details.pickupTime ? ` at ${formatDisplayTime(details.pickupTime)}` : ""
+    }`,
+    `Drop-off: ${details.dropoffDate}${
+      details.dropoffTime ? ` at ${formatDisplayTime(details.dropoffTime)}` : ""
+    }`,
     `Passengers: ${details.guests}`,
     details.departureLocation
       ? `Departure: ${details.departureLocation}`
@@ -102,8 +139,12 @@ export async function sendBookingRequestNotification(details: {
       "Thank you for your booking request. Our team will contact you shortly to confirm availability.",
       "",
       `Tour: ${details.productTitle}`,
-      `Pick-up: ${details.pickupDate}`,
-      `Drop-off: ${details.dropoffDate}`,
+      `Pick-up: ${details.pickupDate}${
+        details.pickupTime ? ` at ${formatDisplayTime(details.pickupTime)}` : ""
+      }`,
+      `Drop-off: ${details.dropoffDate}${
+        details.dropoffTime ? ` at ${formatDisplayTime(details.dropoffTime)}` : ""
+      }`,
       "",
       "Ronica's Splendid Tours",
     ].join("\n"),

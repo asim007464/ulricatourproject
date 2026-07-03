@@ -1,6 +1,7 @@
 import fs from "fs";
 import path from "path";
 import type { ProductPricing } from "@/lib/products";
+import { getFormTripTypeAttr } from "@/lib/products";
 import { syncProductCoverImageInHtml, syncProductDetailImageInHtml } from "@/lib/product-image";
 
 const TEMPLATE_SLUGS = {
@@ -132,7 +133,7 @@ export function buildProductHtml(options: {
     )
     .replace(
       /<form class="enix-bf-form"([^>]*)>/,
-      `<form class="enix-bf-form" data-product-id="${options.wordpressId}" data-btn-booking="BOOK NOW" data-btn-request="REQUEST BOOKING" data-base-price="${options.pricing.basePrice}" data-base-pax-limit="${options.pricing.basePaxLimit}" data-extra-surcharge="${options.pricing.extraSurcharge}" data-max-seats="${options.pricing.maxSeats}" data-min-pax="${options.pricing.minPax}" data-duration-days="1" data-rental-type="${options.pricing.rentalType}" data-currency="&#036;" data-locations="${locationsJson}">`
+      `<form class="enix-bf-form" data-product-id="${options.wordpressId}" data-btn-booking="BOOK NOW" data-btn-request="REQUEST BOOKING" data-base-price="${options.pricing.basePrice}" data-base-pax-limit="${options.pricing.basePaxLimit}" data-extra-surcharge="${options.pricing.extraSurcharge}" data-max-seats="${options.pricing.maxSeats}" data-min-pax="${options.pricing.minPax}" data-duration-days="1" data-rental-type="${options.pricing.rentalType}" data-trip-type="${getFormTripTypeAttr(options.pricing.tripType, options.pricing.rentalType, options.slug)}" data-currency="&#036;" data-locations="${locationsJson}">`
     );
 
   if (options.description) {

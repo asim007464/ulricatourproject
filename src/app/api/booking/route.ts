@@ -6,19 +6,24 @@ import {
 } from "@/lib/products";
 import { sendBookingRequestNotification } from "@/lib/email";
 import { getSiteUrl } from "@/lib/env";
+import { encodeBookingToken } from "@/lib/booking-verify";
 import { saveOrder } from "@/lib/orders";
 import { createAdminClient } from "@/lib/supabase/admin";
 import {
   isBookingRangeBlocked,
   parseBlockedDates,
 } from "@/lib/product-availability";
+import { isValidBookingTime } from "@/lib/booking-time";
 import type { BookingDetails } from "@/lib/paypal";
+import type { ProductPricing } from "@/lib/products";
 
 type BookingPayload = {
   action?: string;
   product_id?: string;
   pickup_date?: string;
   dropoff_date?: string;
+  pickup_time?: string;
+  dropoff_time?: string;
   guests?: string;
   departure_location?: string;
   customer_name?: string;
@@ -36,10 +41,6 @@ function wpError(message: string, status = 400) {
   return NextResponse.json({ success: false, data: { message } }, { status });
 }
 
-function encodeBookingToken(booking: BookingDetails) {
-  return Buffer.from(JSON.stringify(booking)).toString("base64url");
-}
-
 async function getBlockedDatesForProduct(slug: string) {
   const supabase = createAdminClient();
   if (!supabase) return [];
@@ -51,6 +52,26 @@ async function getBlockedDatesForProduct(slug: string) {
     .maybeSingle();
 
   return parseBlockedDates(data?.blocked_dates);
+}
+
+function validateTaxiTimes(
+  pricing: ProductPricing,
+  pickupTime: string,
+  dropoffTime: string
+): string | null {
+  if (pricing.rentalType !== "taxi") {
+    return null;
+  }
+
+  if (!isValidBookingTime(pickupTime)) {
+    return "Please select a pick-up time.";
+  }
+
+  if (pricing.tripType === "round_trip" && !isValidBookingTime(dropoffTime)) {
+    return "Please select a drop-off time.";
+  }
+
+  return null;
 }
 
 export async function GET(request: Request) {
@@ -95,6 +116,8 @@ export async function POST(request: Request) {
     const productId = payload.product_id?.toString();
     const pickupDate = payload.pickup_date?.toString() || "";
     const dropoffDate = payload.dropoff_date?.toString() || pickupDate;
+    const pickupTime = payload.pickup_time?.toString().trim() || "";
+    const dropoffTime = payload.dropoff_time?.toString().trim() || "";
     const guests = Number(payload.guests || 1);
     const departureLocation = payload.departure_location?.toString() || "";
 
@@ -114,8 +137,8 @@ export async function POST(request: Request) {
       return wpError("Please select a pick-up date.");
     }
 
-    if (guests > pricing.maxSeats) {
-      return wpError(`Maximum ${pricing.maxSeats} passengers allowed.`);
+    if (guests < pricing.minPax) {
+      return wpError(`Minimum ${pricing.minPax} passenger(s) required.`);
     }
 
     if (pricing.locations.length > 0 && !departureLocation) {
@@ -128,6 +151,18 @@ export async function POST(request: Request) {
         "One or more selected dates are unavailable. Please choose different dates."
       );
     }
+
+    const taxiTimeError = validateTaxiTimes(pricing, pickupTime, dropoffTime);
+    if (taxiTimeError) {
+      return wpError(taxiTimeError);
+    }
+
+    const taxiPickupTime =
+      pricing.rentalType === "taxi" ? pickupTime : undefined;
+    const taxiDropoffTime =
+      pricing.rentalType === "taxi" && pricing.tripType === "round_trip"
+        ? dropoffTime
+        : undefined;
 
     if (action === "enix_request_booking") {
       const customerName = payload.customer_name?.toString().trim() || "";
@@ -144,6 +179,8 @@ export async function POST(request: Request) {
         productTitle,
         pickupDate,
         dropoffDate,
+        pickupTime: taxiPickupTime,
+        dropoffTime: taxiDropoffTime,
         guests,
         departureLocation: departureLocation || undefined,
         customerName,
@@ -165,6 +202,8 @@ export async function POST(request: Request) {
         customer_message: payload.customer_message?.toString() || null,
         pickup_date: pickupDate,
         dropoff_date: dropoffDate,
+        pickup_time: taxiPickupTime || null,
+        dropoff_time: taxiDropoffTime || null,
         guests,
         departure_location: departureLocation || null,
         amount: calculateBookingTotal(
@@ -183,6 +222,12 @@ export async function POST(request: Request) {
     }
 
     if (action === "enix_booking_add_to_cart") {
+      if (guests > pricing.maxSeats) {
+        return wpError(
+          `Online booking is available for up to ${pricing.maxSeats} passengers. Please submit a request booking for larger groups.`
+        );
+      }
+
       const amount = calculateBookingTotal(
         pricing,
         guests,
@@ -194,12 +239,14 @@ export async function POST(request: Request) {
         productTitle,
         pickupDate,
         dropoffDate,
+        pickupTime: taxiPickupTime,
+        dropoffTime: taxiDropoffTime,
         guests,
         departureLocation: departureLocation || undefined,
         amount,
       };
 
-      await saveOrder({
+      const pendingOrderId = await saveOrder({
         product_slug: product.slug,
         product_title: productTitle,
         order_type: "pending",
@@ -211,12 +258,18 @@ export async function POST(request: Request) {
         customer_message: null,
         pickup_date: pickupDate,
         dropoff_date: dropoffDate,
+        pickup_time: taxiPickupTime || null,
+        dropoff_time: taxiDropoffTime || null,
         guests,
         departure_location: departureLocation || null,
         amount,
         currency: "USD",
         paypal_order_id: null,
       });
+
+      if (pendingOrderId) {
+        booking.pendingOrderId = pendingOrderId;
+      }
 
       const token = encodeBookingToken(booking);
       const siteUrl = getSiteUrl().replace(/\/$/, "");

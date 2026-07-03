@@ -21,12 +21,61 @@ jQuery(document).ready(function($) {
         var basePaxLimit = parseInt($form.data('base-pax-limit'), 10) || 4;
         var extraCharge = parseFloat($form.data('extra-surcharge')) || 0;
         var minPax = parseInt($form.data('min-pax'), 10) || 1;
+        var maxSeats = parseInt($form.data('max-seats'), 10) || 6;
         var durationDays = parseInt($form.data('duration-days'), 10) || 1;
         var rentalType = ($form.data('rental-type') || '').toString();
+        var tripType = ($form.data('trip-type') || 'round-trip').toString();
+        var isOneWayTaxi = rentalType === 'taxi' && tripType === 'one-way';
         var currency = $form.data('currency') || '$';
         var $totalValue = $widget.find('.enix-bf-total-value');
         var $inputLocation = $widget.find('select[name="departure_location"]');
         var hasLocations = $inputLocation.length > 0;
+        var $availableValue = $widget.find('.enix-bf-available-value');
+        var $submitContainer = $widget.find('.enix-bf-submit-container');
+        var $overCapacityNotice = $('<p class="enix-bf-over-capacity-notice"></p>');
+        var $requestSwitchBtn = $(
+            '<button type="button" class="enix-bf-request-switch-btn"></button>'
+        );
+
+        if ($availableValue.length) {
+            $availableValue.text(maxSeats);
+        }
+
+        $inputGuests.removeAttr('max');
+
+        $overCapacityNotice.text(
+            'You selected more passengers than we can confirm instantly online (' +
+                maxSeats +
+                ' max). Please use Request Booking and our team will check availability for your group.'
+        );
+        $requestSwitchBtn.text($form.data('btn-request') || 'REQUEST BOOKING');
+        $submitContainer.append($overCapacityNotice);
+        $submitContainer.append($requestSwitchBtn);
+
+        function guestsExceedCapacity() {
+            var guests = parseInt($inputGuests.val(), 10) || minPax;
+            return guests > maxSeats;
+        }
+
+        function updateCapacityUI() {
+            var over = guestsExceedCapacity();
+
+            if ('booking' === activeTab && over) {
+                $btnSubmit.hide();
+                $overCapacityNotice.show();
+                $requestSwitchBtn.show();
+            } else {
+                $btnSubmit.show();
+                $overCapacityNotice.hide();
+                $requestSwitchBtn.hide();
+
+                if ('booking' === activeTab) {
+                    $btnSubmit.text($form.data('btn-booking') || 'BOOK NOW');
+                } else {
+                    $btnSubmit.text($form.data('btn-request') || 'REQUEST BOOKING');
+                }
+            }
+        }
 
         function getActivePricing() {
             // If departure locations are configured, override base price + extra fee from selected option
@@ -61,9 +110,14 @@ jQuery(document).ready(function($) {
             $totalValue.text(currency + total.toFixed(2));
         }
 
-        $inputGuests.on('input change keyup', recalcTotal);
+        $inputGuests.on('input change keyup', function() {
+            recalcTotal();
+            updateCapacityUI();
+        });
         if (hasLocations) {
-            $inputLocation.on('change', recalcTotal);
+            $inputLocation.on('change', function() {
+                recalcTotal();
+            });
         }
         recalcTotal();
 
@@ -87,6 +141,36 @@ jQuery(document).ready(function($) {
             activeTab = $widget.find('.enix-bf-tab').data('tab');
         }
         applyTabFields();
+        updateCapacityUI();
+
+        if (isOneWayTaxi && $inputDropoff.length) {
+            $inputDropoff.closest('.enix-bf-col').hide();
+        }
+
+        var isTaxi = rentalType === 'taxi';
+        var $inputPickupTime = $();
+        var $inputDropoffTime = $();
+
+        if (isTaxi) {
+            var $dateRow = $inputPickup.closest('.enix-bf-row');
+            var $timeRow = $('<div class="enix-bf-row enix-bf-taxi-time-row"></div>');
+            var $pickupTimeCol = $('<div class="enix-bf-col"></div>');
+
+            $pickupTimeCol.append('<label class="enix-bf-label">Pick-up Time</label>');
+            $inputPickupTime = $('<input type="time" name="pickup_time" class="enix-bf-input" required>');
+            $pickupTimeCol.append($inputPickupTime);
+            $timeRow.append($pickupTimeCol);
+
+            if (!isOneWayTaxi) {
+                var $dropoffTimeCol = $('<div class="enix-bf-col enix-bf-dropoff-time-field"></div>');
+                $dropoffTimeCol.append('<label class="enix-bf-label">Drop-off Time</label>');
+                $inputDropoffTime = $('<input type="time" name="dropoff_time" class="enix-bf-input" required>');
+                $dropoffTimeCol.append($inputDropoffTime);
+                $timeRow.append($dropoffTimeCol);
+            }
+
+            $dateRow.after($timeRow);
+        }
 
         // Helper: format a JS Date as d-m-Y
         function formatDmY(d) {
@@ -102,7 +186,7 @@ jQuery(document).ready(function($) {
             allowInput: true,
             onChange: function(selectedDates, dateStr, instance) {
                 // Enforce Drop-off date to be after Pick-up date
-                if (instance.element.name === 'pickup_date' && $inputDropoff.length) {
+                if (instance.element.name === 'pickup_date' && $inputDropoff.length && !isOneWayTaxi) {
                     var dropoffInstance = $inputDropoff[0]._flatpickr;
                     if (dropoffInstance) {
                         dropoffInstance.set('minDate', dateStr);
@@ -124,7 +208,7 @@ jQuery(document).ready(function($) {
 
         if (typeof flatpickr !== 'undefined') {
             flatpickr($inputPickup[0], fpConfig);
-            if ($inputDropoff.length) {
+            if ($inputDropoff.length && !isOneWayTaxi) {
                 flatpickr($inputDropoff[0], fpConfig);
             }
         }
@@ -140,15 +224,31 @@ jQuery(document).ready(function($) {
 
             activeTab = $this.data('tab');
             applyTabFields();
+            updateCapacityUI();
 
             if ('booking' === activeTab) {
-                $btnSubmit.text($form.data('btn-booking') || 'BOOKING');
+                $btnSubmit.text($form.data('btn-booking') || 'BOOK NOW');
             } else {
                 $btnSubmit.text($form.data('btn-request') || 'REQUEST BOOKING');
             }
 
             // Clear status messages when switching contexts
             $messageBox.removeClass('success error').hide().text('');
+        });
+
+        $requestSwitchBtn.on('click', function(e) {
+            e.preventDefault();
+            var $requestTab = $widget.find('.enix-bf-tab[data-tab="request"]');
+            if ($requestTab.length) {
+                $requestTab.trigger('click');
+                $messageBox
+                    .removeClass('error')
+                    .addClass('success')
+                    .text(
+                        'Please fill in your contact details below and submit your request.'
+                    )
+                    .fadeIn();
+            }
         });
 
         // AJAX Form Submission
@@ -168,9 +268,33 @@ jQuery(document).ready(function($) {
                 return;
             }
 
-            // Max guests safety check
-            if (guests > 6) {
-                $messageBox.addClass('error').text('Error: The absolute maximum allowed seats is 6.').fadeIn();
+            if (!isOneWayTaxi && $inputDropoff.length && !dropoffDate) {
+                $messageBox.addClass('error').text('Please select a Drop-off Date.').fadeIn();
+                return;
+            }
+
+            if (isTaxi) {
+                if (!$inputPickupTime.val()) {
+                    $messageBox.addClass('error').text('Please select a Pick-up Time.').fadeIn();
+                    return;
+                }
+
+                if (!isOneWayTaxi && $inputDropoffTime.length && !$inputDropoffTime.val()) {
+                    $messageBox.addClass('error').text('Please select a Drop-off Time.').fadeIn();
+                    return;
+                }
+            }
+
+            // Instant booking is only available within vehicle capacity
+            if ('booking' === activeTab && guests > maxSeats) {
+                $messageBox
+                    .addClass('error')
+                    .text(
+                        'Online booking is available for up to ' +
+                            maxSeats +
+                            ' passengers. Please use Request Booking for larger groups.'
+                    )
+                    .fadeIn();
                 return;
             }
 
@@ -209,6 +333,8 @@ jQuery(document).ready(function($) {
                     product_id: productId,
                     pickup_date: pickupDate,
                     dropoff_date: dropoffDate,
+                    pickup_time: isTaxi ? $inputPickupTime.val() : '',
+                    dropoff_time: isTaxi && !isOneWayTaxi ? ($inputDropoffTime.val() || '') : '',
                     guests: guests,
                     customer_name: customerName,
                     customer_email: customerEmail,
@@ -249,6 +375,8 @@ jQuery(document).ready(function($) {
                 product_id: productId,
                 pickup_date: pickupDate,
                 dropoff_date: dropoffDate,
+                pickup_time: isTaxi ? $inputPickupTime.val() : '',
+                dropoff_time: isTaxi && !isOneWayTaxi ? ($inputDropoffTime.val() || '') : '',
                 guests: guests,
                 tab_type: activeTab,
                 departure_location: hasLocations ? ($inputLocation.val() || '') : ''

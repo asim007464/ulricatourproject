@@ -34,6 +34,10 @@ if (!url || !serviceKey) {
 
 const supabase = createClient(url, serviceKey);
 
+function inferTripTypeFromSlug(slug) {
+  return slug.includes("round-trip") ? "round_trip" : "one_way";
+}
+
 function decodeHtmlEntities(value) {
   return value
     .replace(/&#036;/g, "$")
@@ -181,6 +185,10 @@ async function seedCategory(manifestPath, category, listingImages) {
       min_pax: parsed.min_pax,
       duration_days: parsed.duration_days,
       rental_type: parsed.rental_type,
+      trip_type:
+        category === "taxi"
+          ? inferTripTypeFromSlug(product.slug)
+          : "round_trip",
       description,
       body_html: html,
       image_url: listingImage || coverImageUrl,

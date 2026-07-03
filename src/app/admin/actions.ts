@@ -14,8 +14,26 @@ import {
   generateWordpressId,
   slugifyTitle,
 } from "@/lib/product-template";
+import { inferTripTypeFromSlug, type TripType } from "@/lib/products";
 import { parseBlockedDatesInput } from "@/lib/product-availability";
 import type { DbProduct } from "@/lib/supabase/types";
+
+function parseTripTypeInput(
+  formData: FormData,
+  category: "taxi" | "tour",
+  slug: string
+): TripType {
+  if (category !== "taxi") {
+    return "round_trip";
+  }
+
+  const value = formData.get("trip_type")?.toString();
+  if (value === "round_trip" || value === "one_way") {
+    return value;
+  }
+
+  return inferTripTypeFromSlug(slug);
+}
 
 export async function loginAction(formData: FormData) {
   const email = formData.get("email")?.toString().trim() || "";
@@ -70,7 +88,7 @@ export async function updateProductAction(formData: FormData) {
   const { data: existing } = await supabase
     .from("products")
     .select(
-      "wordpress_id, body_html, image_url, detail_image_url, locations"
+      "wordpress_id, body_html, image_url, detail_image_url, locations, category, trip_type"
     )
     .eq("slug", slug)
     .maybeSingle();
@@ -84,6 +102,12 @@ export async function updateProductAction(formData: FormData) {
     }
   }
 
+  const rentalType = formData.get("rental_type")?.toString() || "tour";
+  const category =
+    (existing?.category as "taxi" | "tour" | undefined) ??
+    (rentalType === "taxi" ? "taxi" : "tour");
+  const tripType = parseTripTypeInput(formData, category, slug);
+
   const pricing = {
     slug,
     title,
@@ -92,7 +116,8 @@ export async function updateProductAction(formData: FormData) {
     extraSurcharge,
     maxSeats,
     minPax,
-    rentalType: formData.get("rental_type")?.toString() || "tour",
+    rentalType,
+    tripType,
     locations,
   };
 
@@ -133,6 +158,7 @@ export async function updateProductAction(formData: FormData) {
       extra_surcharge: extraSurcharge,
       max_seats: maxSeats,
       min_pax: minPax,
+      trip_type: tripType,
       active,
       locations,
       blocked_dates: blockedDates,
@@ -257,6 +283,7 @@ export async function createProductAction(formData: FormData) {
 
   const wordpressId = generateWordpressId();
   const rentalType = category === "taxi" ? "taxi" : "tour";
+  const tripType = parseTripTypeInput(formData, category, slug);
   const pricing = {
     slug,
     title,
@@ -266,6 +293,7 @@ export async function createProductAction(formData: FormData) {
     maxSeats,
     minPax,
     rentalType,
+    tripType,
     locations,
   };
 
@@ -296,6 +324,7 @@ export async function createProductAction(formData: FormData) {
     min_pax: minPax,
     duration_days: 1,
     rental_type: rentalType,
+    trip_type: tripType,
     locations,
     blocked_dates: blockedDates,
     active,

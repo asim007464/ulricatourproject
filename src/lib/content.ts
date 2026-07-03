@@ -3,6 +3,7 @@ import path from "path";
 import { createAdminClient } from "@/lib/supabase/admin";
 import type { DbProduct, DbSitePage } from "@/lib/supabase/types";
 import type { ProductPricing } from "@/lib/products";
+import { getFormTripTypeAttr } from "@/lib/products";
 import { buildListingCardHtml } from "@/lib/product-template";
 import {
   extractProductCoverImageUrl,
@@ -215,7 +216,7 @@ export function syncFormPricingInHtml(
 
   let result = html.replace(
     /<form class="enix-bf-form"([^>]*)>/,
-    `<form class="enix-bf-form" data-product-id="${wordpressId || ""}" data-base-price="${pricing.basePrice}" data-base-pax-limit="${pricing.basePaxLimit}" data-extra-surcharge="${pricing.extraSurcharge}" data-max-seats="${pricing.maxSeats}" data-min-pax="${pricing.minPax}" data-rental-type="${pricing.rentalType}" data-locations="${locationsJson}">`
+    `<form class="enix-bf-form" data-product-id="${wordpressId || ""}" data-base-price="${pricing.basePrice}" data-base-pax-limit="${pricing.basePaxLimit}" data-extra-surcharge="${pricing.extraSurcharge}" data-max-seats="${pricing.maxSeats}" data-min-pax="${pricing.minPax}" data-rental-type="${pricing.rentalType}" data-trip-type="${getFormTripTypeAttr(pricing.tripType, pricing.rentalType, pricing.slug)}" data-locations="${locationsJson}">`
   );
 
   if (pricing.title) {

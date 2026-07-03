@@ -62,7 +62,11 @@ export default function PayPalCheckout({
             throw new Error(result.error || "Payment could not be completed.");
           }
 
-          window.location.href = "/checkout/success";
+          const params = new URLSearchParams({
+            title: booking.productTitle,
+            amount: booking.amount.toFixed(2),
+          });
+          window.location.href = `/checkout/success?${params.toString()}`;
         }}
         onError={() => {
           alert("PayPal encountered an error. Please try again.");

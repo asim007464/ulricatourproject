@@ -17,6 +17,7 @@ export type DbProduct = {
   min_pax: number;
   duration_days: number;
   rental_type: string;
+  trip_type: "one_way" | "round_trip";
   description: string | null;
   body_html: string | null;
   image_url: string | null;
@@ -41,6 +42,8 @@ export type DbOrder = {
   customer_message: string | null;
   pickup_date: string;
   dropoff_date: string;
+  pickup_time: string | null;
+  dropoff_time: string | null;
   guests: number;
   departure_location: string | null;
   amount: number | null;

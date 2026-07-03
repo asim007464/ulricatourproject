@@ -142,6 +142,23 @@ export default function ProductEditForm({ product }: ProductEditFormProps) {
         />
       </label>
 
+      {product.category === "taxi" ? (
+        <label>
+          Trip type
+          <select
+            name="trip_type"
+            defaultValue={product.trip_type ?? "one_way"}
+          >
+            <option value="one_way">One way (pick-up date only)</option>
+            <option value="round_trip">Round trip (pick-up and drop-off dates)</option>
+          </select>
+          <span className="admin-muted">
+            One-way transfers hide the drop-off date on the booking form. Round
+            trip shows both dates.
+          </span>
+        </label>
+      ) : null}
+
       <ProductAvailabilityField initialDates={product.blocked_dates ?? []} />
 
       <label className="admin-checkbox">

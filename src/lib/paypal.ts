@@ -9,9 +9,12 @@ export type BookingDetails = {
   productTitle: string;
   pickupDate: string;
   dropoffDate: string;
+  pickupTime?: string;
+  dropoffTime?: string;
   guests: number;
   departureLocation?: string;
   amount: number;
+  pendingOrderId?: string;
 };
 
 async function getAccessToken(): Promise<string> {

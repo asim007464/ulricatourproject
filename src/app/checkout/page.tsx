@@ -1,17 +1,9 @@
 import Link from "next/link";
 import type { BookingDetails } from "@/lib/paypal";
+import { formatDisplayTime } from "@/lib/booking-time";
+import { decodeBookingToken, verifyBooking } from "@/lib/booking-verify";
 import PayPalCheckout from "@/components/PayPalCheckout";
 import "./checkout.css";
-
-function decodeBookingToken(token: string): BookingDetails | null {
-  try {
-    return JSON.parse(
-      Buffer.from(token, "base64url").toString("utf8")
-    ) as BookingDetails;
-  } catch {
-    return null;
-  }
-}
 
 export default async function CheckoutPage({
   searchParams,
@@ -20,7 +12,15 @@ export default async function CheckoutPage({
 }) {
   const params = await searchParams;
   const bookingToken = params.booking || "";
-  const booking = bookingToken ? decodeBookingToken(bookingToken) : null;
+  let booking: BookingDetails | null = null;
+
+  if (bookingToken) {
+    try {
+      booking = await verifyBooking(decodeBookingToken(bookingToken));
+    } catch {
+      booking = null;
+    }
+  }
 
   if (!booking || !bookingToken) {
     return (
@@ -47,12 +47,25 @@ export default async function CheckoutPage({
           <ul>
             <li>
               <span>Pick-up</span>
-              <strong>{booking.pickupDate}</strong>
+              <strong>
+                {booking.pickupDate}
+                {booking.pickupTime
+                  ? ` at ${formatDisplayTime(booking.pickupTime)}`
+                  : ""}
+              </strong>
             </li>
-            <li>
-              <span>Drop-off</span>
-              <strong>{booking.dropoffDate}</strong>
-            </li>
+            {booking.dropoffDate !== booking.pickupDate ||
+            booking.dropoffTime ? (
+              <li>
+                <span>Drop-off</span>
+                <strong>
+                  {booking.dropoffDate}
+                  {booking.dropoffTime
+                    ? ` at ${formatDisplayTime(booking.dropoffTime)}`
+                    : ""}
+                </strong>
+              </li>
+            ) : null}
             <li>
               <span>Passengers</span>
               <strong>{booking.guests}</strong>

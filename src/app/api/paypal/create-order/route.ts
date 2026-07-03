@@ -1,31 +1,6 @@
 import { NextResponse } from "next/server";
-import { createPayPalOrder, type BookingDetails } from "@/lib/paypal";
-import {
-  calculateBookingTotal,
-  getProductPricingAsync,
-} from "@/lib/products";
-
-function decodeBookingToken(token: string): BookingDetails {
-  const booking = JSON.parse(
-    Buffer.from(token, "base64url").toString("utf8")
-  ) as BookingDetails;
-  return booking;
-}
-
-async function verifyBooking(booking: BookingDetails): Promise<BookingDetails> {
-  const pricing = await getProductPricingAsync(booking.productSlug);
-  const amount = calculateBookingTotal(
-    pricing,
-    booking.guests,
-    booking.departureLocation
-  );
-
-  return {
-    ...booking,
-    productTitle: pricing.title,
-    amount,
-  };
-}
+import { decodeBookingToken, verifyBooking } from "@/lib/booking-verify";
+import { createPayPalOrder } from "@/lib/paypal";
 
 export async function POST(request: Request) {
   try {

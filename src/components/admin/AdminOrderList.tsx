@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { updateOrderStatusAction } from "@/app/admin/actions";
+import { formatDisplayTime } from "@/lib/booking-time";
 import type { DbOrder } from "@/lib/supabase/types";
 
 type AdminOrderListProps = {
@@ -155,9 +156,19 @@ export default function AdminOrderList({ orders }: AdminOrderListProps) {
                     <h3>Trip</h3>
                     <dl className="admin-order-details__list">
                       <dt>Pick-up</dt>
-                      <dd>{order.pickup_date}</dd>
+                      <dd>
+                        {order.pickup_date}
+                        {order.pickup_time
+                          ? ` at ${formatDisplayTime(order.pickup_time)}`
+                          : ""}
+                      </dd>
                       <dt>Drop-off</dt>
-                      <dd>{order.dropoff_date}</dd>
+                      <dd>
+                        {order.dropoff_date}
+                        {order.dropoff_time
+                          ? ` at ${formatDisplayTime(order.dropoff_time)}`
+                          : ""}
+                      </dd>
                       <dt>Guests</dt>
                       <dd>{order.guests}</dd>
                       {order.departure_location ? (

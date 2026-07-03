@@ -10,6 +10,7 @@ export default function ProductCreateForm() {
   const router = useRouter();
   const [error, setError] = useState("");
   const [slug, setSlug] = useState("new-product");
+  const [category, setCategory] = useState<"taxi" | "tour">("taxi");
 
   return (
     <form
@@ -44,11 +45,37 @@ export default function ProductCreateForm() {
 
       <label>
         Category
-        <select name="category" required defaultValue="taxi">
+        <select
+          name="category"
+          required
+          value={category}
+          onChange={(event) =>
+            setCategory(event.target.value as "taxi" | "tour")
+          }
+        >
           <option value="taxi">Taxi / Transfer</option>
           <option value="tour">Tours</option>
         </select>
       </label>
+
+      {category === "taxi" ? (
+        <label>
+          Trip type
+          <select
+            name="trip_type"
+            defaultValue={
+              slug.includes("round-trip") ? "round_trip" : "one_way"
+            }
+          >
+            <option value="one_way">One way (pick-up date only)</option>
+            <option value="round_trip">Round trip (pick-up and drop-off dates)</option>
+          </select>
+          <span className="admin-muted">
+            One-way transfers hide the drop-off date on the booking form. Round
+            trip shows both dates.
+          </span>
+        </label>
+      ) : null}
 
       <label>
         Description

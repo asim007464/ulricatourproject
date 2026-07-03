@@ -16,6 +16,8 @@ const products: ProductEntry[] = [
   ...(tourManifest.products as ProductEntry[]),
 ];
 
+export type TripType = "one_way" | "round_trip";
+
 export type ProductPricing = {
   slug: string;
   title: string;
@@ -25,8 +27,30 @@ export type ProductPricing = {
   maxSeats: number;
   minPax: number;
   rentalType: string;
+  tripType?: TripType;
   locations: Array<{ name: string; base_price: number; extra_fee: number }>;
 };
+
+export function inferTripTypeFromSlug(slug: string): TripType {
+  return slug.includes("round-trip") ? "round_trip" : "one_way";
+}
+
+export function getFormTripTypeAttr(
+  tripType: TripType | undefined,
+  rentalType: string,
+  slug?: string
+): "one-way" | "round-trip" {
+  if (rentalType !== "taxi") {
+    return "round-trip";
+  }
+
+  const resolved = tripType ?? (slug ? inferTripTypeFromSlug(slug) : "one_way");
+  return resolved === "one_way" ? "one-way" : "round-trip";
+}
+
+function parseTripTypeFromFormAttr(value: string): TripType {
+  return value === "one-way" ? "one_way" : "round_trip";
+}
 
 function decodeHtmlEntities(value: string): string {
   return value
@@ -59,13 +83,21 @@ function parseFormAttributes(html: string): Omit<ProductPricing, "slug" | "title
     locations = JSON.parse(decoded) as ProductPricing["locations"];
   }
 
+  const rentalType = readString("rental-type");
+  const tripTypeAttr = readString("trip-type");
+
   return {
     basePrice: readNumber("base-price"),
     basePaxLimit: readNumber("base-pax-limit", 4),
     extraSurcharge: readNumber("extra-surcharge"),
     maxSeats: readNumber("max-seats", 6),
     minPax: readNumber("min-pax", 1),
-    rentalType: readString("rental-type"),
+    rentalType,
+    tripType: tripTypeAttr
+      ? parseTripTypeFromFormAttr(tripTypeAttr)
+      : rentalType === "taxi"
+        ? "one_way"
+        : "round_trip",
     locations,
   };
 }
@@ -156,6 +188,12 @@ function generateWordpressId() {
 }
 
 export function dbProductToPricing(product: DbProduct): ProductPricing {
+  const tripType =
+    product.trip_type ??
+    (product.category === "taxi"
+      ? inferTripTypeFromSlug(product.slug)
+      : "round_trip");
+
   return {
     slug: product.slug,
     title: product.title,
@@ -165,6 +203,7 @@ export function dbProductToPricing(product: DbProduct): ProductPricing {
     maxSeats: product.max_seats,
     minPax: product.min_pax,
     rentalType: product.rental_type,
+    tripType,
     locations: product.locations || [],
   };
 }
@@ -212,11 +251,16 @@ export function getProductPricing(slug: string): ProductPricing {
   );
   const html = fs.readFileSync(bodyPath, "utf8");
   const pricing = parseFormAttributes(html);
+  const tripType =
+    pricing.rentalType === "taxi" && !html.includes('data-trip-type="')
+      ? inferTripTypeFromSlug(product.slug)
+      : pricing.tripType;
 
   return {
     slug: product.slug,
     title: decodeHtmlEntities(product.title),
     ...pricing,
+    tripType,
   };
 }
 
