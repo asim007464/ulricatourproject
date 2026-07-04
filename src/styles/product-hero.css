@@ -3,10 +3,10 @@
 .elementor-1326 .elementor-element.elementor-element-90dc87b {
   width: 100% !important;
   max-width: 100% !important;
-  height: 520px !important;
-  min-height: 520px !important;
-  max-height: 520px !important;
-  --min-height: 520px !important;
+  height: 570px !important;
+  min-height: 570px !important;
+  max-height: 570px !important;
+  --min-height: 570px !important;
   --width: 100% !important;
   --content-width: 100% !important;
   --container-max-width: 100% !important;
@@ -75,19 +75,19 @@
 @media (max-width: 1024px) {
   .elementor-1158 .elementor-element.elementor-element-b48889c,
   .elementor-1326 .elementor-element.elementor-element-90dc87b {
-    height: 400px !important;
-    min-height: 400px !important;
-    max-height: 400px !important;
-    --min-height: 400px !important;
+    height: 450px !important;
+    min-height: 450px !important;
+    max-height: 450px !important;
+    --min-height: 450px !important;
   }
 }
 
 @media (max-width: 767px) {
   .elementor-1158 .elementor-element.elementor-element-b48889c,
   .elementor-1326 .elementor-element.elementor-element-90dc87b {
-    height: 340px !important;
-    min-height: 340px !important;
-    max-height: 340px !important;
-    --min-height: 340px !important;
+    height: 390px !important;
+    min-height: 390px !important;
+    max-height: 390px !important;
+    --min-height: 390px !important;
   }
 }
