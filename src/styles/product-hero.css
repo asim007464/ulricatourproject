@@ -3,10 +3,10 @@
 .elementor-1326 .elementor-element.elementor-element-90dc87b {
   width: 100% !important;
   max-width: 100% !important;
-  height: 200px !important;
-  min-height: 200px !important;
-  max-height: 200px !important;
-  --min-height: 200px !important;
+  height: 400px !important;
+  min-height: 400px !important;
+  max-height: 400px !important;
+  --min-height: 400px !important;
   --width: 100% !important;
   --content-width: 100% !important;
   --container-max-width: 100% !important;
@@ -75,19 +75,19 @@
 @media (max-width: 1024px) {
   .elementor-1158 .elementor-element.elementor-element-b48889c,
   .elementor-1326 .elementor-element.elementor-element-90dc87b {
-    height: 150px !important;
-    min-height: 150px !important;
-    max-height: 150px !important;
-    --min-height: 150px !important;
+    height: 300px !important;
+    min-height: 300px !important;
+    max-height: 300px !important;
+    --min-height: 300px !important;
   }
 }
 
 @media (max-width: 767px) {
   .elementor-1158 .elementor-element.elementor-element-b48889c,
   .elementor-1326 .elementor-element.elementor-element-90dc87b {
-    height: 125px !important;
-    min-height: 125px !important;
-    max-height: 125px !important;
-    --min-height: 125px !important;
+    height: 250px !important;
+    min-height: 250px !important;
+    max-height: 250px !important;
+    --min-height: 250px !important;
   }
 }
