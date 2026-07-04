@@ -99,10 +99,6 @@ export function extractListingCardImage(
 }
 
 
-function escapeCssUrl(value: string) {
-  return value.replace(/\\/g, "\\\\").replace(/"/g, '\\"');
-}
-
 const PRODUCT_HERO_STYLE_ID = "ronicas-product-hero-image";
 
 function removeProductHeroImageElements(html: string) {
