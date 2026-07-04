@@ -53,6 +53,34 @@ function extractProductDetailImageUrl(html) {
   return null;
 }
 
+function syncProductHeroBackground(html, imageUrl) {
+  if (!imageUrl || !html) return html;
+
+  let result = html;
+  for (const elementId of [
+    "elementor-element-b48889c",
+    "elementor-element-90dc87b",
+  ]) {
+    const heroCssPattern = new RegExp(
+      `(\\.${elementId}[\\s\\S]*?background-image:\\s*url\\(")[^"]+("\\))`,
+      "i"
+    );
+    if (heroCssPattern.test(result)) {
+      result = result.replace(heroCssPattern, `$1${imageUrl}$2`);
+    }
+  }
+
+  return result;
+}
+
+function applyProductPageImages(html, imageUrl, previousUrl) {
+  if (!imageUrl || !html) return html;
+
+  let result = syncProductHeroBackground(html, imageUrl);
+  result = syncProductDetailImageInHtml(result, imageUrl, previousUrl);
+  return result;
+}
+
 function syncProductDetailImageInHtml(html, imageUrl, previousUrl) {
   if (!imageUrl || !html) return html;
 
@@ -93,11 +121,7 @@ for (const product of products || []) {
   const previousUrl =
     product.detail_image_url || extractProductDetailImageUrl(product.body_html || "");
   const bodyHtml = product.body_html
-    ? syncProductDetailImageInHtml(
-        product.body_html,
-        mappedUrl,
-        previousUrl
-      )
+    ? applyProductPageImages(product.body_html, mappedUrl, previousUrl)
     : product.body_html;
 
   const { error: updateError } = await supabase

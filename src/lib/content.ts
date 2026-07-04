@@ -13,6 +13,7 @@ import {
   protectSiteBrandImages,
   syncProductCoverImageInHtml,
   syncProductDetailImageInHtml,
+  applyProductPageImagesInHtml,
 } from "@/lib/product-image";
 
 export {
@@ -321,24 +322,16 @@ export async function getProductBodyHtml(
     extractProductCoverImageUrl(sourceHtml) ||
     extractProductImageUrl(sourceHtml);
 
-  if (coverImageUrl) {
-    html = syncProductCoverImageInHtml(html, coverImageUrl);
-  }
-
   const detailImageUrl =
     resolveProductDetailImageUrl(slug, product?.detail_image_url) ||
     extractProductDetailImageUrl(sourceHtml) ||
     coverImageUrl;
 
-  if (detailImageUrl) {
-    html = syncProductDetailImageInHtml(
-      html,
-      detailImageUrl,
-      extractProductDetailImageUrl(sourceHtml)
-    );
-  } else {
-    html = protectSiteBrandImages(html);
-  }
+  html = applyProductPageImagesInHtml(html, {
+    detailImageUrl,
+    coverImageUrl,
+    previousDetailUrl: extractProductDetailImageUrl(sourceHtml),
+  });
 
   return syncFormPricingInHtml(
     protectSiteBrandImages(html),

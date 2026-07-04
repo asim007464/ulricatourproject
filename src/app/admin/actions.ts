@@ -5,8 +5,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { syncFormPricingInHtml } from "@/lib/content";
 import {
-  syncProductCoverImageInHtml,
-  syncProductDetailImageInHtml,
+  applyProductPageImagesInHtml,
   extractProductDetailImageUrl,
 } from "@/lib/product-image";
 import {
@@ -133,18 +132,16 @@ export async function updateProductAction(formData: FormData) {
 
   const resolvedDetailImage =
     resolveProductDetailImageUrl(slug, detailImageUrl || null) || imageUrl;
-  if (syncedBodyHtml && imageUrl) {
-    syncedBodyHtml = syncProductCoverImageInHtml(syncedBodyHtml, imageUrl);
-  }
-  if (syncedBodyHtml && resolvedDetailImage) {
-    syncedBodyHtml = syncProductDetailImageInHtml(
-      syncedBodyHtml,
-      resolvedDetailImage,
-      existing?.detail_image_url ||
+  if (syncedBodyHtml) {
+    syncedBodyHtml = applyProductPageImagesInHtml(syncedBodyHtml, {
+      detailImageUrl: resolvedDetailImage,
+      coverImageUrl: imageUrl || null,
+      previousDetailUrl:
+        existing?.detail_image_url ||
         extractProductDetailImageUrl(baseHtml) ||
         existing?.image_url ||
-        null
-    );
+        null,
+    });
   }
 
   const { error } = await supabase

@@ -311,7 +311,7 @@ p#billing_confirm_email_field {
 .elementor-1158 .elementor-element.elementor-element-920335f,
 .elementor-1326 .elementor-element.elementor-element-a1782f3 {
   width: 100%;
-  overflow: hidden;
+  overflow: visible;
   border-radius: 12px;
 }
 
@@ -319,21 +319,27 @@ p#billing_confirm_email_field {
 .elementor-1326 .elementor-element.elementor-element-a1782f3 img {
   display: block;
   width: 100%;
-  height: clamp(160px, 22vw, 240px);
-  max-height: 240px;
-  object-fit: cover;
+  height: auto;
+  max-height: none;
+  object-fit: contain;
   object-position: center;
   border-radius: 12px;
 }
 
-/* Product detail hero banner (taxi + tour) — match Elementor breakpoints */
+/* Product detail hero banner (taxi + tour) — show full detail image at top */
+.elementor-1158 .elementor-element.elementor-element-b48889c,
+.elementor-1326 .elementor-element.elementor-element-90dc87b {
+  min-height: clamp(280px, 42vw, 520px) !important;
+}
+
 .elementor-1158 .elementor-element.elementor-element-b48889c:not(.elementor-motion-effects-element-type-background),
 .elementor-1158 .elementor-element.elementor-element-b48889c > .elementor-motion-effects-container > .elementor-motion-effects-layer,
 .elementor-1326 .elementor-element.elementor-element-90dc87b:not(.elementor-motion-effects-element-type-background),
 .elementor-1326 .elementor-element.elementor-element-90dc87b > .elementor-motion-effects-container > .elementor-motion-effects-layer {
-  background-size: cover;
+  background-size: contain;
   background-position: center;
   background-repeat: no-repeat;
+  background-color: #f4f4f4;
 }
 
 /* Product pages — stack content + booking form on tablet/mobile */

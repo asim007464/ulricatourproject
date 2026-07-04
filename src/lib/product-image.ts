@@ -154,6 +154,33 @@ export function syncProductCoverImageInHtml(html: string, imageUrl: string) {
   return protectSiteBrandImages(result);
 }
 
+/** Applies detail image to the hero banner and left-column image on product pages. */
+export function applyProductPageImagesInHtml(
+  html: string,
+  options: {
+    detailImageUrl?: string | null;
+    coverImageUrl?: string | null;
+    previousDetailUrl?: string | null;
+  }
+) {
+  const heroImageUrl = options.detailImageUrl || options.coverImageUrl;
+  let result = html;
+
+  if (heroImageUrl) {
+    result = syncProductCoverImageInHtml(result, heroImageUrl);
+  }
+
+  if (options.detailImageUrl) {
+    result = syncProductDetailImageInHtml(
+      result,
+      options.detailImageUrl,
+      options.previousDetailUrl
+    );
+  }
+
+  return protectSiteBrandImages(result);
+}
+
 /** Updates the left-column detail image above the calendar on product pages. */
 export function syncProductDetailImageInHtml(
   html: string,
