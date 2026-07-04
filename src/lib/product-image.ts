@@ -111,17 +111,27 @@ function removeProductHeroImageElements(html: string) {
     .replace(/<img class="ronicas-product-hero-banner"[^>]*>\s*/gi, "");
 }
 
-function injectProductHeroBackgroundStyle(html: string, imageUrl: string) {
-  const safeUrl = escapeCssUrl(imageUrl);
+function stripHeroBackgroundFromElementorInlineCss(html: string) {
+  let result = html;
+
+  for (const elementId of PRODUCT_HERO_ELEMENTS) {
+    result = result.replace(
+      new RegExp(`\\.${elementId}[^{]*\\{[^}]*background-image:[^}]*\\}\\s*`, "gi"),
+      ""
+    );
+  }
+
+  return result;
+}
+
+function injectProductHeroBackgroundStyle(html: string, _imageUrl: string) {
   const styleBlock = `<style id="${PRODUCT_HERO_STYLE_ID}">
 .elementor-1158 .elementor-element.elementor-element-b48889c,
 .elementor-1158 .elementor-element.elementor-element-b48889c > .elementor-motion-effects-container > .elementor-motion-effects-layer,
 .elementor-1326 .elementor-element.elementor-element-90dc87b,
 .elementor-1326 .elementor-element.elementor-element-90dc87b > .elementor-motion-effects-container > .elementor-motion-effects-layer {
-  background-image: url("${safeUrl}") !important;
-  background-size: cover !important;
-  background-position: center center !important;
-  background-repeat: no-repeat !important;
+  background-image: none !important;
+  background-color: transparent !important;
 }
 </style>`;
 
@@ -133,10 +143,13 @@ function injectProductHeroBackgroundStyle(html: string, imageUrl: string) {
     ""
   );
 
+  result = stripHeroBackgroundFromElementorInlineCss(result);
+
+  // Append after Elementor inline CSS so our rules win on Vercel/production.
   if (result.includes('id="elementor-frontend-inline-css"')) {
     result = result.replace(
-      /<style id="elementor-frontend-inline-css">/i,
-      `${styleBlock}\n<style id="elementor-frontend-inline-css">`
+      /(<style id="elementor-frontend-inline-css">[\s\S]*?<\/style>)/i,
+      `$1\n${styleBlock}`
     );
   } else {
     result = `${styleBlock}${result}`;
@@ -147,9 +160,8 @@ function injectProductHeroBackgroundStyle(html: string, imageUrl: string) {
 
 const PRODUCT_HERO_DATA_IDS = ["b48889c", "90dc87b"] as const;
 
-function buildHeroBackgroundInlineStyle(imageUrl: string) {
-  const safeUrl = imageUrl.replace(/'/g, "\\'");
-  return `background-image:url('${safeUrl}');background-size:cover;background-position:center center;background-repeat:no-repeat;`;
+function buildHeroBackgroundInlineStyle() {
+  return "background-image:none;background-color:transparent;";
 }
 
 function injectProductHeroBannerImage(html: string, imageUrl: string) {
@@ -178,8 +190,8 @@ function injectProductHeroBannerImage(html: string, imageUrl: string) {
   return result;
 }
 
-function injectProductHeroInlineBackground(html: string, imageUrl: string) {
-  const bgStyle = buildHeroBackgroundInlineStyle(imageUrl);
+function injectProductHeroInlineBackground(html: string, _imageUrl: string) {
+  const bgStyle = buildHeroBackgroundInlineStyle();
   let result = html;
 
   for (const dataId of PRODUCT_HERO_DATA_IDS) {
@@ -209,12 +221,10 @@ function syncProductHeroBackground(html: string, imageUrl: string) {
   let result = removeProductHeroImageElements(html);
 
   for (const elementId of PRODUCT_HERO_ELEMENTS) {
-    const heroCssPattern = new RegExp(
-      `(\\.${elementId}[\\s\\S]*?background-image:\\s*url\\(["']?)[^"')]+(["']?\\))`,
-      "gi"
+    result = result.replace(
+      new RegExp(`\\.${elementId}[^{]*\\{[^}]*background-image:[^}]*\\}\\s*`, "gi"),
+      ""
     );
-
-    result = result.replace(heroCssPattern, `$1${imageUrl}$2`);
   }
 
   result = injectProductHeroBackgroundStyle(result, imageUrl);

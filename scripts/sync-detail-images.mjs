@@ -59,9 +59,52 @@ function removeProductHeroImageElements(html) {
     .replace(/<img class="ronicas-product-hero-banner"[^>]*>\s*/gi, "");
 }
 
-function buildHeroBackgroundInlineStyle(imageUrl) {
-  const safeUrl = imageUrl.replace(/'/g, "\\'");
-  return `background-image:url('${safeUrl}');background-size:cover;background-position:center center;background-repeat:no-repeat;`;
+function stripHeroBackgroundFromElementorInlineCss(html) {
+  let result = html;
+  for (const elementId of [
+    "elementor-element-b48889c",
+    "elementor-element-90dc87b",
+  ]) {
+    result = result.replace(
+      new RegExp(`\\.${elementId}[^{]*\\{[^}]*background-image:[^}]*\\}\\s*`, "gi"),
+      ""
+    );
+  }
+  return result;
+}
+
+function buildHeroBackgroundInlineStyle() {
+  return "background-image:none;background-color:transparent;";
+}
+
+function injectProductHeroBackgroundStyle(html, imageUrl) {
+  const styleBlock = `<style id="ronicas-product-hero-image">
+.elementor-1158 .elementor-element.elementor-element-b48889c,
+.elementor-1158 .elementor-element.elementor-element-b48889c > .elementor-motion-effects-container > .elementor-motion-effects-layer,
+.elementor-1326 .elementor-element.elementor-element-90dc87b,
+.elementor-1326 .elementor-element.elementor-element-90dc87b > .elementor-motion-effects-container > .elementor-motion-effects-layer {
+  background-image: none !important;
+  background-color: transparent !important;
+}
+</style>`;
+
+  let result = html.replace(
+    /<style id="ronicas-product-hero-image">[\s\S]*?<\/style>\s*/i,
+    ""
+  );
+
+  result = stripHeroBackgroundFromElementorInlineCss(result);
+
+  if (result.includes('id="elementor-frontend-inline-css"')) {
+    result = result.replace(
+      /(<style id="elementor-frontend-inline-css">[\s\S]*?<\/style>)/i,
+      `$1\n${styleBlock}`
+    );
+  } else {
+    result = `${styleBlock}${result}`;
+  }
+
+  return result;
 }
 
 function injectProductHeroBannerImage(html, imageUrl) {
@@ -90,39 +133,8 @@ function injectProductHeroBannerImage(html, imageUrl) {
   return result;
 }
 
-function injectProductHeroBackgroundStyle(html, imageUrl) {
-  const safeUrl = imageUrl.replace(/\\/g, "\\\\").replace(/"/g, '\\"');
-  const styleBlock = `<style id="ronicas-product-hero-image">
-.elementor-1158 .elementor-element.elementor-element-b48889c,
-.elementor-1158 .elementor-element.elementor-element-b48889c > .elementor-motion-effects-container > .elementor-motion-effects-layer,
-.elementor-1326 .elementor-element.elementor-element-90dc87b,
-.elementor-1326 .elementor-element.elementor-element-90dc87b > .elementor-motion-effects-container > .elementor-motion-effects-layer {
-  background-image: url("${safeUrl}") !important;
-  background-size: cover !important;
-  background-position: center center !important;
-  background-repeat: no-repeat !important;
-}
-</style>`;
-
-  let result = html.replace(
-    /<style id="ronicas-product-hero-image">[\s\S]*?<\/style>\s*/i,
-    ""
-  );
-
-  if (result.includes('id="elementor-frontend-inline-css"')) {
-    result = result.replace(
-      /<style id="elementor-frontend-inline-css">/i,
-      `${styleBlock}\n<style id="elementor-frontend-inline-css">`
-    );
-  } else {
-    result = `${styleBlock}${result}`;
-  }
-
-  return result;
-}
-
-function injectProductHeroInlineBackground(html, imageUrl) {
-  const bgStyle = buildHeroBackgroundInlineStyle(imageUrl);
+function injectProductHeroInlineBackground(html, _imageUrl) {
+  const bgStyle = buildHeroBackgroundInlineStyle();
   let result = html;
 
   for (const dataId of ["b48889c", "90dc87b"]) {
@@ -156,11 +168,10 @@ function syncProductHeroBackground(html, imageUrl) {
     "elementor-element-b48889c",
     "elementor-element-90dc87b",
   ]) {
-    const heroCssPattern = new RegExp(
-      `(\\.${elementId}[\\s\\S]*?background-image:\\s*url\\(["']?)[^"')]+(["']?\\))`,
-      "gi"
+    result = result.replace(
+      new RegExp(`\\.${elementId}[^{]*\\{[^}]*background-image:[^}]*\\}\\s*`, "gi"),
+      ""
     );
-    result = result.replace(heroCssPattern, `$1${imageUrl}$2`);
   }
 
   result = injectProductHeroBackgroundStyle(result, imageUrl);

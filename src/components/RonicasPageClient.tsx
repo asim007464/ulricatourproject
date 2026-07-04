@@ -138,10 +138,8 @@ export default function RonicasPageClient({
       const imageUrl = detailImg?.currentSrc || detailImg?.src;
       if (!hero || !imageUrl) return;
 
-      hero.style.backgroundImage = `url("${imageUrl}")`;
-      hero.style.backgroundSize = "cover";
-      hero.style.backgroundPosition = "center center";
-      hero.style.backgroundRepeat = "no-repeat";
+      hero.style.backgroundImage = "none";
+      hero.style.backgroundColor = "transparent";
 
       const inner = hero.querySelector(".e-con-inner") ?? hero;
       let banner = inner.querySelector<HTMLImageElement>(

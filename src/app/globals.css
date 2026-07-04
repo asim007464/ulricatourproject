@@ -361,24 +361,17 @@ p#billing_confirm_email_field {
   overflow: hidden !important;
 }
 
+.elementor-1158 .elementor-element.elementor-element-b48889c,
+.elementor-1326 .elementor-element.elementor-element-90dc87b,
 .elementor-1158 .elementor-element.elementor-element-b48889c > .elementor-motion-effects-container > .elementor-motion-effects-layer,
 .elementor-1326 .elementor-element.elementor-element-90dc87b > .elementor-motion-effects-container > .elementor-motion-effects-layer {
-  background-size: cover !important;
-  background-position: center center !important;
-  background-repeat: no-repeat !important;
-  min-height: 100% !important;
-  height: 100% !important;
-}
-
-.elementor-1158 .elementor-element.elementor-element-b48889c,
-.elementor-1326 .elementor-element.elementor-element-90dc87b {
-  background-size: cover !important;
-  background-position: center center !important;
-  background-repeat: no-repeat !important;
+  background-image: none !important;
+  background-color: transparent !important;
 }
 
 .elementor-1158 .elementor-element.elementor-element-b48889c::before,
 .elementor-1326 .elementor-element.elementor-element-90dc87b::before {
+  display: none !important;
   opacity: 0 !important;
   pointer-events: none;
 }
@@ -394,7 +387,7 @@ p#billing_confirm_email_field {
   object-fit: cover !important;
   object-position: center center !important;
   pointer-events: none;
-  z-index: 0;
+  z-index: 1;
 }
 
 @media (max-width: 1024px) {
