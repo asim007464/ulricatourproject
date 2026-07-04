@@ -1,3 +1,9 @@
+import {
+  buildHeroContainerInlineStyle,
+  buildProductHeroStyleBlock,
+  PRODUCT_HERO_STYLE_ID,
+} from "@/lib/product-hero-css";
+
 const SITE_LOGO_URL =
   "/wp-content/uploads/2026/02/RONICAS-LOGO-BLACK-AND-GOLD.gif";
 
@@ -98,9 +104,6 @@ export function extractListingCardImage(
   return match?.[1] && !isProtectedImageUrl(match[1]) ? match[1] : null;
 }
 
-
-const PRODUCT_HERO_STYLE_ID = "ronicas-product-hero-image";
-
 function removeProductHeroImageElements(html: string) {
   return html
     .replace(/<img class="ronicas-product-hero-img"[^>]*>\s*/gi, "")
@@ -121,42 +124,7 @@ function stripHeroBackgroundFromElementorInlineCss(html: string) {
 }
 
 function injectProductHeroBackgroundStyle(html: string, _imageUrl: string) {
-  const styleBlock = `<style id="${PRODUCT_HERO_STYLE_ID}">
-.elementor-1158 .elementor-element.elementor-element-b48889c,
-.elementor-1158 .elementor-element.elementor-element-b48889c > .elementor-motion-effects-container > .elementor-motion-effects-layer,
-.elementor-1326 .elementor-element.elementor-element-90dc87b,
-.elementor-1326 .elementor-element.elementor-element-90dc87b > .elementor-motion-effects-container > .elementor-motion-effects-layer {
-  background-image: none !important;
-  background-color: transparent !important;
-}
-.elementor-1158 .elementor-element.elementor-element-b48889c,
-.elementor-1326 .elementor-element.elementor-element-90dc87b {
-  width: 100% !important;
-  max-width: 100% !important;
-  --content-width: 100% !important;
-  --container-max-width: 100% !important;
-  --padding-left: 0px !important;
-  --padding-right: 0px !important;
-  padding: 0 !important;
-}
-.elementor-1158 .elementor-element.elementor-element-b48889c > .e-con-inner,
-.elementor-1326 .elementor-element.elementor-element-90dc87b > .e-con-inner {
-  width: 100% !important;
-  max-width: 100% !important;
-  --content-width: 100% !important;
-  --container-max-width: 100% !important;
-  padding: 0 !important;
-  margin: 0 !important;
-}
-.elementor-1158 .ronicas-product-hero-banner,
-.elementor-1326 .ronicas-product-hero-banner {
-  width: 100% !important;
-  max-width: none !important;
-  height: 100% !important;
-  object-fit: cover !important;
-  object-position: center center !important;
-}
-</style>`;
+  const styleBlock = buildProductHeroStyleBlock();
 
   let result = html.replace(
     new RegExp(
@@ -168,14 +136,13 @@ function injectProductHeroBackgroundStyle(html: string, _imageUrl: string) {
 
   result = stripHeroBackgroundFromElementorInlineCss(result);
 
-  // Append after Elementor inline CSS so our rules win on Vercel/production.
-  if (result.includes('id="elementor-frontend-inline-css"')) {
-    result = result.replace(
-      /(<style id="elementor-frontend-inline-css">[\s\S]*?<\/style>)/i,
-      `$1\n${styleBlock}`
-    );
+  // Last inline style in page HTML — overrides Elementor head CSS on Vercel.
+  const footerIdx = result.lastIndexOf("</footer>");
+  if (footerIdx !== -1) {
+    result =
+      result.slice(0, footerIdx) + `\n${styleBlock}\n` + result.slice(footerIdx);
   } else {
-    result = `${styleBlock}${result}`;
+    result = `${result}\n${styleBlock}`;
   }
 
   return result;
@@ -184,7 +151,7 @@ function injectProductHeroBackgroundStyle(html: string, _imageUrl: string) {
 const PRODUCT_HERO_DATA_IDS = ["b48889c", "90dc87b"] as const;
 
 function buildHeroBackgroundInlineStyle() {
-  return "background-image:none;background-color:transparent;";
+  return buildHeroContainerInlineStyle();
 }
 
 function injectProductHeroBannerImage(html: string, imageUrl: string) {

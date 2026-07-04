@@ -1,0 +1,93 @@
+/* Product detail top banner — single source of truth (local + Vercel) */
+.elementor-1158 .elementor-element.elementor-element-b48889c,
+.elementor-1326 .elementor-element.elementor-element-90dc87b {
+  width: 100% !important;
+  max-width: 100% !important;
+  height: 200px !important;
+  min-height: 200px !important;
+  max-height: 200px !important;
+  --min-height: 200px !important;
+  --width: 100% !important;
+  --content-width: 100% !important;
+  --container-max-width: 100% !important;
+  --padding-top: 0px !important;
+  --padding-bottom: 0px !important;
+  --padding-left: 0px !important;
+  --padding-right: 0px !important;
+  padding: 0 !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  overflow: hidden !important;
+  background-image: none !important;
+  background-color: transparent !important;
+}
+
+.elementor-1158 .elementor-element.elementor-element-b48889c.e-con-boxed,
+.elementor-1326 .elementor-element.elementor-element-90dc87b.e-con-boxed {
+  --content-width: 100% !important;
+  --container-max-width: 100% !important;
+}
+
+.elementor-1158 .elementor-element.elementor-element-b48889c > .e-con-inner,
+.elementor-1326 .elementor-element.elementor-element-90dc87b > .e-con-inner {
+  width: 100% !important;
+  max-width: 100% !important;
+  --content-width: 100% !important;
+  --container-max-width: 100% !important;
+  height: 100% !important;
+  min-height: 100% !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  position: relative !important;
+  display: block !important;
+  overflow: hidden !important;
+}
+
+.elementor-1158 .elementor-element.elementor-element-b48889c > .elementor-motion-effects-container > .elementor-motion-effects-layer,
+.elementor-1326 .elementor-element.elementor-element-90dc87b > .elementor-motion-effects-container > .elementor-motion-effects-layer {
+  background-image: none !important;
+  background-color: transparent !important;
+  min-height: 100% !important;
+  height: 100% !important;
+}
+
+.elementor-1158 .elementor-element.elementor-element-b48889c::before,
+.elementor-1326 .elementor-element.elementor-element-90dc87b::before {
+  display: none !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+.elementor-1158 .ronicas-product-hero-banner,
+.elementor-1326 .ronicas-product-hero-banner {
+  position: absolute !important;
+  inset: 0 !important;
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  max-width: none !important;
+  object-fit: cover !important;
+  object-position: center center !important;
+  pointer-events: none;
+  z-index: 1;
+}
+
+@media (max-width: 1024px) {
+  .elementor-1158 .elementor-element.elementor-element-b48889c,
+  .elementor-1326 .elementor-element.elementor-element-90dc87b {
+    height: 150px !important;
+    min-height: 150px !important;
+    max-height: 150px !important;
+    --min-height: 150px !important;
+  }
+}
+
+@media (max-width: 767px) {
+  .elementor-1158 .elementor-element.elementor-element-b48889c,
+  .elementor-1326 .elementor-element.elementor-element-90dc87b {
+    height: 125px !important;
+    min-height: 125px !important;
+    max-height: 125px !important;
+    --min-height: 125px !important;
+  }
+}

@@ -125,7 +125,7 @@ export default function RonicasPageClient({
     };
   }, []);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!loadBookingScripts) return;
 
     const applyProductHeroBackground = () => {
