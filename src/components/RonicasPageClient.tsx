@@ -128,6 +128,48 @@ export default function RonicasPageClient({
   useEffect(() => {
     if (!loadBookingScripts) return;
 
+    const applyProductHeroBackground = () => {
+      const detailImg = document.querySelector<HTMLImageElement>(
+        "#ronicas-site .elementor-element-920335f img, #ronicas-site .elementor-element-a1782f3 img"
+      );
+      const hero = document.querySelector<HTMLElement>(
+        "#ronicas-site .elementor-element-b48889c, #ronicas-site .elementor-element-90dc87b"
+      );
+      const imageUrl = detailImg?.currentSrc || detailImg?.src;
+      if (!hero || !imageUrl) return;
+
+      hero.style.backgroundImage = `url("${imageUrl}")`;
+      hero.style.backgroundSize = "cover";
+      hero.style.backgroundPosition = "center center";
+      hero.style.backgroundRepeat = "no-repeat";
+
+      const inner = hero.querySelector(".e-con-inner") ?? hero;
+      let banner = inner.querySelector<HTMLImageElement>(
+        ".ronicas-product-hero-banner"
+      );
+      if (!banner) {
+        banner = document.createElement("img");
+        banner.className = "ronicas-product-hero-banner";
+        banner.alt = "";
+        banner.setAttribute("aria-hidden", "true");
+        banner.decoding = "async";
+        inner.prepend(banner);
+      }
+      banner.src = imageUrl;
+    };
+
+    applyProductHeroBackground();
+    const timer = window.setTimeout(applyProductHeroBackground, 300);
+    const imgTimer = window.setTimeout(applyProductHeroBackground, 1200);
+    return () => {
+      window.clearTimeout(timer);
+      window.clearTimeout(imgTimer);
+    };
+  }, [loadBookingScripts]);
+
+  useEffect(() => {
+    if (!loadBookingScripts) return;
+
     let cancelled = false;
 
     const initBooking = async () => {

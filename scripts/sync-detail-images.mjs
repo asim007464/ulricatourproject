@@ -53,24 +53,119 @@ function extractProductDetailImageUrl(html) {
   return null;
 }
 
+function removeProductHeroImageElements(html) {
+  return html
+    .replace(/<img class="ronicas-product-hero-img"[^>]*>\s*/gi, "")
+    .replace(/<img class="ronicas-product-hero-banner"[^>]*>\s*/gi, "");
+}
+
+function buildHeroBackgroundInlineStyle(imageUrl) {
+  const safeUrl = imageUrl.replace(/'/g, "\\'");
+  return `background-image:url('${safeUrl}');background-size:cover;background-position:center center;background-repeat:no-repeat;`;
+}
+
+function injectProductHeroBannerImage(html, imageUrl) {
+  const safeSrc = imageUrl.replace(/"/g, "&quot;");
+  const imgTag = `<img class="ronicas-product-hero-banner" src="${safeSrc}" alt="" decoding="async" aria-hidden="true" />`;
+  let result = html;
+
+  for (const dataId of ["b48889c", "90dc87b"]) {
+    const existingPattern = new RegExp(
+      `(data-id="${dataId}"[\\s\\S]*?<div class="e-con-inner">)\\s*<img class="ronicas-product-hero-banner"[^>]*>\\s*(</div>)`,
+      "i"
+    );
+
+    if (existingPattern.test(result)) {
+      result = result.replace(existingPattern, `$1\n${imgTag}\n$2`);
+      continue;
+    }
+
+    const emptyPattern = new RegExp(
+      `(data-id="${dataId}"[\\s\\S]*?<div class="e-con-inner">)\\s*(</div>)`,
+      "i"
+    );
+    result = result.replace(emptyPattern, `$1\n${imgTag}\n$2`);
+  }
+
+  return result;
+}
+
+function injectProductHeroBackgroundStyle(html, imageUrl) {
+  const safeUrl = imageUrl.replace(/\\/g, "\\\\").replace(/"/g, '\\"');
+  const styleBlock = `<style id="ronicas-product-hero-image">
+.elementor-1158 .elementor-element.elementor-element-b48889c,
+.elementor-1158 .elementor-element.elementor-element-b48889c > .elementor-motion-effects-container > .elementor-motion-effects-layer,
+.elementor-1326 .elementor-element.elementor-element-90dc87b,
+.elementor-1326 .elementor-element.elementor-element-90dc87b > .elementor-motion-effects-container > .elementor-motion-effects-layer {
+  background-image: url("${safeUrl}") !important;
+  background-size: cover !important;
+  background-position: center center !important;
+  background-repeat: no-repeat !important;
+}
+</style>`;
+
+  let result = html.replace(
+    /<style id="ronicas-product-hero-image">[\s\S]*?<\/style>\s*/i,
+    ""
+  );
+
+  if (result.includes('id="elementor-frontend-inline-css"')) {
+    result = result.replace(
+      /<style id="elementor-frontend-inline-css">/i,
+      `${styleBlock}\n<style id="elementor-frontend-inline-css">`
+    );
+  } else {
+    result = `${styleBlock}${result}`;
+  }
+
+  return result;
+}
+
+function injectProductHeroInlineBackground(html, imageUrl) {
+  const bgStyle = buildHeroBackgroundInlineStyle(imageUrl);
+  let result = html;
+
+  for (const dataId of ["b48889c", "90dc87b"]) {
+    const tagPattern = new RegExp(
+      `<div\\b[^>]*\\bdata-id="${dataId}"\\b[^>]*>`,
+      "i"
+    );
+
+    result = result.replace(tagPattern, (tag) => {
+      const classMatch = tag.match(/\bclass="([^"]*)"/i);
+      const settingsMatch = tag.match(/\bdata-settings="([^"]*)"/i);
+      const classes =
+        classMatch?.[1] ??
+        `elementor-element elementor-element-${dataId} e-lazyloaded e-flex e-con-boxed e-con e-parent`;
+      const settings =
+        settingsMatch?.[1] ??
+        "{&quot;background_background&quot;:&quot;classic&quot;}";
+
+      return `<div class="${classes}" data-id="${dataId}" data-element_type="container" data-e-type="container" data-settings="${settings}" style="${bgStyle}">`;
+    });
+  }
+
+  return result;
+}
+
 function syncProductHeroBackground(html, imageUrl) {
   if (!imageUrl || !html) return html;
 
-  let result = html;
+  let result = removeProductHeroImageElements(html);
   for (const elementId of [
     "elementor-element-b48889c",
     "elementor-element-90dc87b",
   ]) {
     const heroCssPattern = new RegExp(
-      `(\\.${elementId}[\\s\\S]*?background-image:\\s*url\\(")[^"]+("\\))`,
-      "i"
+      `(\\.${elementId}[\\s\\S]*?background-image:\\s*url\\(["']?)[^"')]+(["']?\\))`,
+      "gi"
     );
-    if (heroCssPattern.test(result)) {
-      result = result.replace(heroCssPattern, `$1${imageUrl}$2`);
-    }
+    result = result.replace(heroCssPattern, `$1${imageUrl}$2`);
   }
 
-  return result;
+  result = injectProductHeroBackgroundStyle(result, imageUrl);
+  result = injectProductHeroInlineBackground(result, imageUrl);
+  return injectProductHeroBannerImage(result, imageUrl);
 }
 
 function applyProductPageImages(html, imageUrl, previousUrl) {

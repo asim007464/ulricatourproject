@@ -307,7 +307,7 @@ p#billing_confirm_email_field {
   margin-left: 26px !important;
 }
 
-/* Product detail page — left column image (title area, above calendar) */
+/* Product detail page — LEFT column image only (title area, above calendar) */
 .elementor-1158 .elementor-element.elementor-element-920335f,
 .elementor-1326 .elementor-element.elementor-element-a1782f3 {
   width: 100%;
@@ -317,29 +317,104 @@ p#billing_confirm_email_field {
 
 .elementor-1158 .elementor-element.elementor-element-920335f img,
 .elementor-1326 .elementor-element.elementor-element-a1782f3 img {
-  display: block;
-  width: 100%;
-  height: auto;
-  max-height: none;
-  object-fit: contain;
+  display: block !important;
+  width: 100% !important;
+  height: auto !important;
+  max-height: none !important;
+  min-height: 0 !important;
+  object-fit: contain !important;
   object-position: center;
   border-radius: 12px;
 }
 
-/* Product detail hero banner (taxi + tour) — show full detail image at top */
+/* Product detail page — TOP banner only (below navbar) */
 .elementor-1158 .elementor-element.elementor-element-b48889c,
 .elementor-1326 .elementor-element.elementor-element-90dc87b {
-  min-height: clamp(280px, 42vw, 520px) !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  height: 600px !important;
+  min-height: 600px !important;
+  max-height: 600px !important;
+  --min-height: 600px !important;
+  --width: 100% !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  overflow: hidden;
 }
 
-.elementor-1158 .elementor-element.elementor-element-b48889c:not(.elementor-motion-effects-element-type-background),
+.elementor-1158 .elementor-element.elementor-element-b48889c.e-con-boxed,
+.elementor-1326 .elementor-element.elementor-element-90dc87b.e-con-boxed {
+  --content-width: 100% !important;
+}
+
+.elementor-1158 .elementor-element.elementor-element-b48889c > .e-con-inner,
+.elementor-1326 .elementor-element.elementor-element-90dc87b > .e-con-inner {
+  width: 100% !important;
+  max-width: 100% !important;
+  height: 100% !important;
+  min-height: inherit !important;
+  padding: 0 !important;
+  position: relative !important;
+  display: block !important;
+  overflow: hidden !important;
+}
+
 .elementor-1158 .elementor-element.elementor-element-b48889c > .elementor-motion-effects-container > .elementor-motion-effects-layer,
-.elementor-1326 .elementor-element.elementor-element-90dc87b:not(.elementor-motion-effects-element-type-background),
 .elementor-1326 .elementor-element.elementor-element-90dc87b > .elementor-motion-effects-container > .elementor-motion-effects-layer {
-  background-size: contain;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-color: #f4f4f4;
+  background-size: cover !important;
+  background-position: center center !important;
+  background-repeat: no-repeat !important;
+  min-height: 100% !important;
+  height: 100% !important;
+}
+
+.elementor-1158 .elementor-element.elementor-element-b48889c,
+.elementor-1326 .elementor-element.elementor-element-90dc87b {
+  background-size: cover !important;
+  background-position: center center !important;
+  background-repeat: no-repeat !important;
+}
+
+.elementor-1158 .elementor-element.elementor-element-b48889c::before,
+.elementor-1326 .elementor-element.elementor-element-90dc87b::before {
+  opacity: 0 !important;
+  pointer-events: none;
+}
+
+.elementor-1158 .ronicas-product-hero-banner,
+.elementor-1326 .ronicas-product-hero-banner {
+  position: absolute;
+  inset: 0;
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  max-width: none !important;
+  object-fit: cover !important;
+  object-position: center center !important;
+  pointer-events: none;
+  z-index: 0;
+}
+
+@media (max-width: 1024px) {
+  .elementor-1158 .elementor-element.elementor-element-b48889c,
+  .elementor-1326 .elementor-element.elementor-element-90dc87b {
+    height: 440px !important;
+    min-height: 440px !important;
+    max-height: 440px !important;
+    --min-height: 440px !important;
+  }
+}
+
+@media (max-width: 767px) {
+  .elementor-1158 .elementor-element.elementor-element-b48889c,
+  .elementor-1326 .elementor-element.elementor-element-90dc87b {
+    height: 360px !important;
+    min-height: 360px !important;
+    max-height: 360px !important;
+    --min-height: 360px !important;
+  }
 }
 
 /* Product pages — stack content + booking form on tablet/mobile */
