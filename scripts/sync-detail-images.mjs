@@ -86,6 +86,33 @@ function injectProductHeroBackgroundStyle(html, imageUrl) {
   background-image: none !important;
   background-color: transparent !important;
 }
+.elementor-1158 .elementor-element.elementor-element-b48889c,
+.elementor-1326 .elementor-element.elementor-element-90dc87b {
+  width: 100% !important;
+  max-width: 100% !important;
+  --content-width: 100% !important;
+  --container-max-width: 100% !important;
+  --padding-left: 0px !important;
+  --padding-right: 0px !important;
+  padding: 0 !important;
+}
+.elementor-1158 .elementor-element.elementor-element-b48889c > .e-con-inner,
+.elementor-1326 .elementor-element.elementor-element-90dc87b > .e-con-inner {
+  width: 100% !important;
+  max-width: 100% !important;
+  --content-width: 100% !important;
+  --container-max-width: 100% !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+.elementor-1158 .ronicas-product-hero-banner,
+.elementor-1326 .ronicas-product-hero-banner {
+  width: 100% !important;
+  max-width: none !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  object-position: center center !important;
+}
 </style>`;
 
   let result = html.replace(

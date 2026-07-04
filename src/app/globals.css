@@ -327,35 +327,44 @@ p#billing_confirm_email_field {
   border-radius: 12px;
 }
 
-/* Product detail page — TOP banner only (below navbar) */
+/* Product detail page — TOP banner only (below navbar), full bleed */
 .elementor-1158 .elementor-element.elementor-element-b48889c,
 .elementor-1326 .elementor-element.elementor-element-90dc87b {
   width: 100% !important;
   max-width: 100% !important;
-  height: 600px !important;
-  min-height: 600px !important;
-  max-height: 600px !important;
-  --min-height: 600px !important;
+  height: 400px !important;
+  min-height: 400px !important;
+  max-height: 400px !important;
+  --min-height: 400px !important;
   --width: 100% !important;
-  padding-top: 0 !important;
-  padding-bottom: 0 !important;
-  padding-left: 0 !important;
-  padding-right: 0 !important;
+  --content-width: 100% !important;
+  --container-max-width: 100% !important;
+  --padding-top: 0px !important;
+  --padding-bottom: 0px !important;
+  --padding-left: 0px !important;
+  --padding-right: 0px !important;
+  padding: 0 !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
   overflow: hidden;
 }
 
 .elementor-1158 .elementor-element.elementor-element-b48889c.e-con-boxed,
 .elementor-1326 .elementor-element.elementor-element-90dc87b.e-con-boxed {
   --content-width: 100% !important;
+  --container-max-width: 100% !important;
 }
 
 .elementor-1158 .elementor-element.elementor-element-b48889c > .e-con-inner,
 .elementor-1326 .elementor-element.elementor-element-90dc87b > .e-con-inner {
   width: 100% !important;
   max-width: 100% !important;
+  --content-width: 100% !important;
+  --container-max-width: 100% !important;
   height: 100% !important;
   min-height: inherit !important;
   padding: 0 !important;
+  margin: 0 auto !important;
   position: relative !important;
   display: block !important;
   overflow: hidden !important;
@@ -393,20 +402,28 @@ p#billing_confirm_email_field {
 @media (max-width: 1024px) {
   .elementor-1158 .elementor-element.elementor-element-b48889c,
   .elementor-1326 .elementor-element.elementor-element-90dc87b {
-    height: 440px !important;
-    min-height: 440px !important;
-    max-height: 440px !important;
-    --min-height: 440px !important;
+    height: 300px !important;
+    min-height: 300px !important;
+    max-height: 300px !important;
+    --min-height: 300px !important;
+    --padding-left: 0px !important;
+    --padding-right: 0px !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
   }
 }
 
 @media (max-width: 767px) {
   .elementor-1158 .elementor-element.elementor-element-b48889c,
   .elementor-1326 .elementor-element.elementor-element-90dc87b {
-    height: 360px !important;
-    min-height: 360px !important;
-    max-height: 360px !important;
-    --min-height: 360px !important;
+    height: 250px !important;
+    min-height: 250px !important;
+    max-height: 250px !important;
+    --min-height: 250px !important;
+    --padding-left: 0px !important;
+    --padding-right: 0px !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
   }
 }
 
