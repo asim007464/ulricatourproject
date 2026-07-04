@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "seed:supabase": "node scripts/seed-supabase.mjs",
-    "sync:detail-images": "node scripts/sync-detail-images.mjs"
+    "sync:detail-images": "node scripts/sync-detail-images.mjs",
+    "upload:detail-images": "node scripts/upload-detail-images.mjs"
   },
   "dependencies": {
     "@paypal/react-paypal-js": "^10.0.0",

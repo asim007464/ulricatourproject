@@ -317,7 +317,7 @@ export async function getProductBodyHtml(
   let html = sourceHtml;
 
   const coverImageUrl =
-    product?.detail_image_url ||
+    product?.image_url ||
     extractProductCoverImageUrl(sourceHtml) ||
     extractProductImageUrl(sourceHtml);
 

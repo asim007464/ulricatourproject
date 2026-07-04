@@ -10,13 +10,13 @@ export function getDefaultDetailImageUrl(slug: string): string | null {
   return PRODUCT_DETAIL_IMAGE_MAP[slug] ?? null;
 }
 
-/** Admin URL wins; otherwise use bundled default from /public/detailsimgs. */
+/** Admin URL wins; otherwise use bundled default from Supabase/public map. */
 export function resolveProductDetailImageUrl(
   slug: string,
   adminUrl?: string | null
 ): string | null {
   const custom = adminUrl?.trim();
-  if (custom) {
+  if (custom && !custom.startsWith("/detailsimgs/")) {
     return custom;
   }
 
