@@ -1,4 +1,5 @@
 /* Ronica's Splendid Tours - site overrides */
+@import "../styles/product-hero.css";
 
 html {
   -webkit-text-size-adjust: 100%;
@@ -326,9 +327,6 @@ p#billing_confirm_email_field {
   object-position: center;
   border-radius: 12px;
 }
-
-/* Product detail top banner — see src/styles/product-hero.css */
-@import "../styles/product-hero.css";
 
 /* Product pages — stack content + booking form on tablet/mobile */
 @media (max-width: 1024px) {
