@@ -231,6 +231,40 @@ export function syncFormPricingInHtml(
   return result;
 }
 
+function injectFlightDetailsIntoBookingFormHtml(html: string) {
+  if (html.includes('name="flight_details"')) {
+    return html;
+  }
+
+  const flightFieldHtml = `
+<div class="enix-bf-col-full enix-bf-flight-details">
+  <label class="enix-bf-label">Flight Details (optional)</label>
+  <textarea
+    name="flight_details"
+    class="enix-bf-input enix-bf-textarea"
+    rows="3"
+    placeholder="Flight number, arrival time, airline, terminal, etc."
+  ></textarea>
+</div>`;
+
+  // Primary: insert right after the guests field block.
+  const guestsBlockPattern =
+    /(<div class="enix-bf-col-full">\s*<label class="enix-bf-label">\s*Number of Passengers\s*<\/label>[\s\S]*?<input[^>]+name="guests"[^>]*>[\s\S]*?<\/div>)/i;
+
+  if (guestsBlockPattern.test(html)) {
+    return html.replace(guestsBlockPattern, `$1\n${flightFieldHtml}`);
+  }
+
+  // Fallback: insert before the request-only "Extra Information" container.
+  const requestOnlyMarker = /(<div class="enix-bf-col-full enix-bf-request-only">)/i;
+  if (requestOnlyMarker.test(html)) {
+    return html.replace(requestOnlyMarker, `${flightFieldHtml}\n$1`);
+  }
+
+  // If we can’t find a good insertion point, return HTML unchanged.
+  return html;
+}
+
 export async function getSitePageHtml(slug: string) {
   const supabase = createAdminClient();
   const fallback = readFallbackPageHtml(slug);
@@ -302,7 +336,11 @@ export async function getProductBodyHtml(
 
   if (!supabase) {
     return fallback
-      ? syncFormPricingInHtml(fallback, pricing, wordpressId)
+      ? syncFormPricingInHtml(
+          injectFlightDetailsIntoBookingFormHtml(fallback),
+          pricing,
+          wordpressId
+        )
       : null;
   }
 
@@ -332,6 +370,8 @@ export async function getProductBodyHtml(
     coverImageUrl,
     previousDetailUrl: extractProductDetailImageUrl(sourceHtml),
   });
+
+  html = injectFlightDetailsIntoBookingFormHtml(html);
 
   return syncFormPricingInHtml(
     protectSiteBrandImages(html),

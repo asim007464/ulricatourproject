@@ -40,6 +40,7 @@ export type DbOrder = {
   customer_phone: string | null;
   customer_address: string | null;
   customer_message: string | null;
+  flight_details: string | null;
   pickup_date: string;
   dropoff_date: string;
   pickup_time: string | null;

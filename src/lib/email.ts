@@ -91,6 +91,7 @@ export async function sendBookingRequestNotification(details: {
   dropoffTime?: string;
   guests: number;
   departureLocation?: string;
+  flightDetails?: string;
   customerName: string;
   customerEmail: string;
   customerPhone?: string;
@@ -114,6 +115,7 @@ export async function sendBookingRequestNotification(details: {
     details.departureLocation
       ? `Departure: ${details.departureLocation}`
       : null,
+    details.flightDetails ? `Flight details: ${details.flightDetails}` : null,
     "",
     `Name: ${details.customerName}`,
     `Email: ${details.customerEmail}`,

@@ -68,6 +68,7 @@ export async function POST(request: Request) {
         customer_phone: null,
         customer_address: null,
         customer_message: null,
+        flight_details: null,
         pickup_date: booking.pickupDate,
         dropoff_date: booking.dropoffDate,
         pickup_time: booking.pickupTime || null,

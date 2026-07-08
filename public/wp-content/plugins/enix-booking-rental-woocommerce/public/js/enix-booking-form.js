@@ -13,6 +13,9 @@ jQuery(document).ready(function($) {
         var $inputPickup = $widget.find('input[name="pickup_date"]');
         var $inputDropoff = $widget.find('input[name="dropoff_date"]');
         var $inputGuests = $widget.find('input[name="guests"]');
+        var $inputFlightDetails = $widget.find(
+            'textarea[name="flight_details"], input[name="flight_details"]'
+        );
         var productId = $form.data('product-id');
 
 
@@ -341,6 +344,7 @@ jQuery(document).ready(function($) {
                     customer_phone: $widget.find('input[name="customer_phone"]').val(),
                     customer_address: $widget.find('input[name="customer_address"]').val(),
                     customer_message: $widget.find('textarea[name="customer_message"]').val(),
+                    flight_details: $inputFlightDetails.val() || '',
                     departure_location: hasLocations ? ($inputLocation.val() || '') : ''
 
                 };
@@ -379,7 +383,8 @@ jQuery(document).ready(function($) {
                 dropoff_time: isTaxi && !isOneWayTaxi ? ($inputDropoffTime.val() || '') : '',
                 guests: guests,
                 tab_type: activeTab,
-                departure_location: hasLocations ? ($inputLocation.val() || '') : ''
+                departure_location: hasLocations ? ($inputLocation.val() || '') : '',
+                flight_details: $inputFlightDetails.val() || ''
 
             };
 

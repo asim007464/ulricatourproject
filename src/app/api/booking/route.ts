@@ -26,6 +26,7 @@ type BookingPayload = {
   dropoff_time?: string;
   guests?: string;
   departure_location?: string;
+  flight_details?: string;
   customer_name?: string;
   customer_email?: string;
   customer_phone?: string;
@@ -120,6 +121,7 @@ export async function POST(request: Request) {
     const dropoffTime = payload.dropoff_time?.toString().trim() || "";
     const guests = Number(payload.guests || 1);
     const departureLocation = payload.departure_location?.toString() || "";
+    const flightDetails = payload.flight_details?.toString().trim() || "";
 
     if (!productId) {
       return wpError("Missing product.");
@@ -183,6 +185,7 @@ export async function POST(request: Request) {
         dropoffTime: taxiDropoffTime,
         guests,
         departureLocation: departureLocation || undefined,
+        flightDetails: flightDetails || undefined,
         customerName,
         customerEmail,
         customerPhone: payload.customer_phone?.toString(),
@@ -200,6 +203,7 @@ export async function POST(request: Request) {
         customer_phone: payload.customer_phone?.toString() || null,
         customer_address: payload.customer_address?.toString() || null,
         customer_message: payload.customer_message?.toString() || null,
+        flight_details: flightDetails || null,
         pickup_date: pickupDate,
         dropoff_date: dropoffDate,
         pickup_time: taxiPickupTime || null,
@@ -256,6 +260,7 @@ export async function POST(request: Request) {
         customer_phone: null,
         customer_address: null,
         customer_message: null,
+        flight_details: flightDetails || null,
         pickup_date: pickupDate,
         dropoff_date: dropoffDate,
         pickup_time: taxiPickupTime || null,
